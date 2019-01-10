@@ -1,0 +1,4 @@
+﻿1、调用远端api，可使用重载方法
+2、api异常捕获显示api名称以及传入参数
+3、interface采用Assembly.LoadFrom方式加载前端窗体dll，dll中有关联引用，为
+   保证引用唯一并正确，只能把dll单独放入interface文件夹中。

@@ -1,0 +1,533 @@
+﻿using EasySocket.vs13.Core;
+using EasySocket.vs13.Stream;
+using EasySocket.vs13.Util;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EasySocket.vs13.Telegram.Easy
+{
+    /// <summary>
+    /// 表示Easy协议的封包
+    /// </summary>
+    [DebuggerDisplay("ApiName = {ApiName},ParametersNames = {parametersNames}")]
+    public sealed class EasyPacket
+    {
+        /// <summary>
+        /// 获取easy协议封包标记
+        /// 字符表示为$
+        /// </summary>
+        public static readonly byte Mark = 36;
+
+        /// <summary>
+        /// 包头长度
+        /// </summary>
+        public const int required = 16;//包头长度
+
+        /// <summary>
+        /// 获取封包的字节长度
+        /// </summary>
+        public int TotalBytes { get; private set; }
+
+        /// <summary>
+        /// 获取api名称长度
+        /// </summary>
+        public byte ApiNameLength { get; private set; }
+
+        /// <summary>
+        /// 获取api名称
+        /// </summary>
+        public string ApiName { get; private set; }
+        /// <summary>
+        /// 获取封包的唯一标识
+        /// </summary>
+        public long Id { get; private set; }
+
+        /// <summary>
+        /// 获取是否为客户端的封包
+        /// </summary>
+        public bool IsFromClient { get; private set; }
+
+        /// <summary>
+        /// 获取或设置是否异常数据
+        /// </summary>
+        public bool IsException { get; set; }
+        /// <summary>
+        /// 获取传入参数的数据类型
+        /// </summary>
+        public IList<string> parametersNames = new List<string>();
+        /// <summary>
+        /// 获取或设置数据体的数据
+        /// </summary>
+        public byte[] Body { get; set; }
+
+        /// <summary>
+        /// 通讯协议的封包
+        /// </summary>
+        /// <param name="api">api名称</param>
+        /// <param name="id">标识符</param>
+        /// <param name="fromClient">是否为客户端的封包</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public EasyPacket(string api,long id, bool fromClient)
+        {
+            if (string.IsNullOrEmpty(api))
+            {
+                throw new ArgumentNullException("api");
+            }
+            this.ApiName = api;
+            this.Id = id;
+            this.IsFromClient = fromClient;
+        }
+
+        /// <summary>
+        /// 将参数序列化并写入为Body
+        /// </summary>
+        /// <param name="serializer">序列化工具</param>
+        /// <param name="parameters">参数</param>
+        /// <exception cref="SerializerException"></exception>
+        public void SetBodyParameters(ISerializer serializer, params object[] parameters)
+        {
+            if (parameters == null || parameters.Length == 0)
+            {
+                return;
+            }
+            var builder = new ByteBuilder(Endians.Big);
+            //添加传入参数的类型名称
+            SetParametersNames(parameters);
+            foreach (var item in parameters)
+            {
+                // 序列化参数为二进制内容
+                var paramBytes = serializer.Serialize(item);
+                // 添加参数内容长度            
+                builder.Add(paramBytes == null ? 0 : paramBytes.Length);
+                // 添加参数内容
+                builder.Add(paramBytes);
+            }
+            this.Body = builder.ToArray();
+        }
+        /// <summary>
+        /// 添加传入参数的类型名称
+        /// </summary>
+        /// <param name="parameters"></param>
+        private void SetParametersNames(params object[] parameters)
+        {
+            if (parameters == null || parameters.Length == 0)
+            {
+                return;
+            }
+            var builder = new ByteBuilder(Endians.Big);
+            foreach (var item in parameters)
+            {
+                this.parametersNames.Add(item.GetType().Name);              
+            }
+        }
+        /// <summary>
+        /// 传入参数的类型名称转为字节流
+        /// </summary>
+        /// <returns></returns>
+        private  byte[] ParametersNamesToBytes()
+        {
+            if (this.parametersNames == null || parametersNames.Count == 0)
+            {
+                return default(byte[]);
+            }
+            var builder = new ByteBuilder(Endians.Big);
+            foreach (var item in parametersNames)
+            {
+                var paramName = Encoding.UTF8.GetBytes(item);
+                // 添加参数内容长度            
+                builder.Add(paramName == null ? 0 : paramName.Length);
+                // 添加参数内容
+                builder.Add(paramName);
+            }
+           return builder.ToArray();
+        }
+
+        /// <summary>
+        /// 将Body的数据解析为参数
+        /// </summary>        
+        /// <returns></returns>
+        public IList<byte[]> GetBodyParameters()
+        {
+            var parameterList = new List<byte[]>();
+
+            if (this.Body == null || this.Body.Length < 4)
+            {
+                return parameterList;
+            }
+
+            var index = 0;
+            while (index < this.Body.Length)
+            {
+                // 参数长度
+                var length = ByteConverter.ToInt32(this.Body, index, Endians.Big);
+                index = index + 4;
+                var paramBytes = new byte[length];
+                // 复制出参数的数据
+                Buffer.BlockCopy(this.Body, index, paramBytes, 0, length);
+                index = index + length;
+                parameterList.Add(paramBytes);
+            }
+
+            return parameterList;
+        }
+
+        /// <summary>
+        /// 将字节流解析为参数名称序列
+        /// </summary>        
+        /// <returns></returns>
+        public static IList<string> GetParametersNames(byte[] parametersNamesBytes)
+        {
+            var parameterNamesList = new List<string>();
+
+            if (parametersNamesBytes == null || parametersNamesBytes.Length < 4)
+            {
+                return parameterNamesList;
+            }
+
+            var index = 0;
+            while (index < parametersNamesBytes.Length)
+            {
+                // 参数长度
+                var length = ByteConverter.ToInt32(parametersNamesBytes, index, Endians.Big);
+                index = index + 4;
+                var paramNameBytes = new byte[length];
+                // 复制出参数的数据
+                Buffer.BlockCopy(parametersNamesBytes, index, paramNameBytes, 0, length);
+                var paramName = Encoding.UTF8.GetString(paramNameBytes);
+                index = index + length;
+                parameterNamesList.Add(paramName);
+            }
+            return parameterNamesList;
+        }
+
+        /// <summary>
+        /// 转换为byte[]
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ToBytes()
+        {
+             
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                int bufferSize = this.TotalBytes;
+                ptr = Marshal.AllocHGlobal(bufferSize);
+                var bytesAll = this.ToArraySegment().Array;          
+
+                // 拷贝至到缓冲区
+                Marshal.Copy(bytesAll, 0, ptr, bufferSize);
+
+                //提取指定长度字节数组
+                byte[] bytesReturn = new byte[bufferSize];
+                Marshal.Copy(ptr, bytesReturn, 0, bufferSize);
+                return bytesReturn;
+            }
+            finally
+            {
+                if (ptr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
+            }
+           ////ptr = Marshal.AllocHGlobal(this.TotalBytes);
+           ////// 拷贝包头到缓冲区首部
+           ////Marshal.Copy(bytes, 0, ptr, this.TotalBytes);
+
+           //IntPtr ptr = IntPtr.Zero;
+           //ptr = Marshal.AllocHGlobal(TotalBytes);
+           //// 拷贝包头到缓冲区首部
+           //Marshal.Copy(bytes, 0, ptr, TotalBytes);
+
+           //byte[] bytes = new byte[TotalBytes];
+           //Marshal.Copy(ptr, bytes, 0,TotalBytes);
+            //return bytes; 
+
+
+
+        }
+
+        /// <summary>
+        /// 转换为ArraySegment
+        /// </summary>
+        /// <returns></returns>
+        public ArraySegment<byte> ToArraySegment()
+        {
+            //关于包头的结构
+            //Mark                    长度1
+            //TotalBytes              长度4
+            //ApiNameLength           长度1
+            //apiNameBytes
+            //Id                      长度8
+            //IsFromClient            长度1
+            //IsException             长度1
+            //ParametersNamesLength   长度1
+            //ParametersNames
+            //Body
+            var apiNameBytes = Encoding.UTF8.GetBytes(this.ApiName);           
+            var parameterNamesBytes = this.ParametersNamesToBytes();
+            var parameterNamesLength = parameterNamesBytes == null ? 0 : parameterNamesBytes.Length;
+            var headLength = apiNameBytes.Length + 16 + 1 + parameterNamesLength;
+            this.TotalBytes = this.Body == null ? headLength : headLength + this.Body.Length;
+
+            this.ApiNameLength = (byte)apiNameBytes.Length;
+            var builder = new ByteBuilder(Endians.Big);
+            builder.Add(EasyPacket.Mark);
+            builder.Add(this.TotalBytes);
+            builder.Add(this.ApiNameLength);
+            builder.Add(apiNameBytes);
+            builder.Add(this.Id);
+            builder.Add(this.IsFromClient);
+            builder.Add(this.IsException);
+            builder.Add((byte)parameterNamesLength);
+            builder.Add(parameterNamesBytes);
+            builder.Add(this.Body);
+            return builder.ToArraySegment();
+        }
+
+        /// <summary>
+        /// 字符串显示
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.ApiName;
+        }
+
+        /// <summary>
+        /// 解析一个数据包       
+        /// 不足一个封包时packet返回null
+        /// 中间件不符合则返回false
+        /// </summary>
+        /// <param name="session">会话</param>
+        /// <param name="packet">数据包</param>
+        /// <returns></returns>
+        public static bool Parse(ISessionStreamReader streamReader,ISession session, out EasyPacket packet)
+        {
+            packet = null;
+            int required = 16;//执行必须满足的数据长度,第一个肯定是包头，所以初始设定为包头长度   
+            int remain = session.RemainDataLength;//剩余长度
+            HeaderOrBodyCodes isHeader = HeaderOrBodyCodes.Header;
+            while (remain >= required)
+            { 
+                //判断是否是包头还是包体还是总体
+                //具体逻辑需要自己指定
+                switch (isHeader)
+                {
+                    case HeaderOrBodyCodes.Header: 
+                            //协议封包标记判断
+                            if (streamReader[0] != EasyPacket.Mark)
+                            {
+                                return false;
+                            }
+                            streamReader.Position = 1;
+
+                            //进入下一次轮回（包头）
+                            //下次解析时的长度设为总长度
+                            required = streamReader.ReadInt32();
+                            //下次解析时的类别设为总体
+                            isHeader = HeaderOrBodyCodes.Total;
+                            break;
+                    case HeaderOrBodyCodes.Body:
+                        return false;
+                    case HeaderOrBodyCodes.Total:
+                            // api名称数据长度
+                            var apiNameLength = streamReader.ReadByte();
+                            // api名称数据
+                            var apiNameBytes = streamReader.ReadArray(apiNameLength);
+                            // 标识符
+                            var id = streamReader.ReadInt64();
+                            // 是否为客户端封包
+                            var isFromClient = streamReader.ReadBoolean();
+                            // 是否异常
+                            var isException = streamReader.ReadBoolean();
+                            var parametersNamesLength = streamReader.ReadByte();
+                            var parametersNames = GetParametersNames(streamReader.ReadArray(parametersNamesLength));
+                            // 实体数据
+                            var body = streamReader.ReadArray(required - streamReader.Position);
+                            // 清空本条数据
+                            streamReader.Clear(required);
+
+                            var apiName = Encoding.UTF8.GetString(apiNameBytes);
+                            packet = new EasyPacket(apiName, id, isFromClient)
+                            {
+                                TotalBytes = required,
+                                ApiNameLength = apiNameLength,
+                                IsException = isException,
+                                parametersNames = parametersNames,
+                                Body = body
+                            };
+                            return true;                      
+                    default:
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        //public static bool Parse(ref IContext context, out EasyPacket packet)
+        //{
+        //    packet = null;
+        //    byte[] bytes = null;
+        //    var session = context.Session;
+        //    ISessionStreamReader streamReader = context.StreamReader;
+        //    int required = session.Extra.Length;//执行必须满足的数据长度   
+        //    HeaderOrBodyCodes isHeader = session.Extra.IsHeader;
+
+        //    //判断是否是包头还是包体还是总体
+        //    //具体逻辑需要自己指定
+        //    switch (isHeader)
+        //    {
+        //        case HeaderOrBodyCodes.Header:
+        //            if (PeekAsBytes(session, out bytes) == true)
+        //            {
+        //                streamReader.WriteBytes(bytes);
+        //                //协议封包标记判断
+        //                if (streamReader[0] != EasyPacket.Mark)
+        //                {
+        //                    return false;
+        //                }
+        //                streamReader.Position = 1;
+
+        //                //进入下一次轮回（包头）
+        //                //下次解析时的长度设为总长度
+        //                session.Extra.Length = streamReader.ReadInt32();
+        //                //下次解析时的类别设为总体
+        //                session.Extra.IsHeader = HeaderOrBodyCodes.Total;
+        //                streamReader.Clear();
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                return true;
+        //            }
+        //        case HeaderOrBodyCodes.Body:
+        //            return false;
+        //        case HeaderOrBodyCodes.Total:
+        //            if (FetchAsBytes(session, out bytes) == true)
+        //            {
+        //                streamReader.WriteBytes(bytes);
+        //                //协议封包标记判断
+        //                if (streamReader[0] != EasyPacket.Mark)
+        //                {
+        //                    return false;
+        //                }
+        //                streamReader.Position = 1;
+        //                // api名称数据长度
+        //                var apiNameLength = streamReader.ReadByte();
+        //                // api名称数据
+        //                var apiNameBytes = streamReader.ReadArray(apiNameLength);
+        //                // 标识符
+        //                var id = streamReader.ReadInt64();
+        //                // 是否为客户端封包
+        //                var isFromClient = streamReader.ReadBoolean();
+        //                // 是否异常
+        //                var isException = streamReader.ReadBoolean();
+        //                // 实体数据
+        //                var body = streamReader.ReadArray(required - streamReader.Position);
+
+        //                // 清空本条数据
+        //                streamReader.Clear();
+
+        //                var apiName = Encoding.UTF8.GetString(apiNameBytes);
+        //                packet = new EasyPacket(apiName, id, isFromClient)
+        //                {
+        //                    TotalBytes = required,
+        //                    ApiNameLength = apiNameLength,
+        //                    IsException = isException,
+        //                    Body = body
+        //                };
+
+        //                //进入下一次轮回（包头）
+        //                //下次解析时的长度设为头长度
+        //                session.Extra.Length = session.HeaderLength;
+        //                //下次解析时的类别设为包头
+        //                session.Extra.IsHeader = HeaderOrBodyCodes.Header;
+        //                streamReader.Clear();
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                return true;
+        //            }
+        //        default:
+        //            return false;
+        //    }
+        //}
+
+        /// <summary>
+        /// 解析并返回多个封包
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="packets"></param>
+        /// <returns></returns>
+        public static bool GenerateEasyPackets(IContext context, out List<EasyPacket> packets)
+        {
+            packets =new List<EasyPacket>();
+            while (true)
+            {
+                var packet = default(EasyPacket);
+                if (Parse(context.StreamReader,context.Session, out packet) == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (packet != null)
+                    {
+                        packets.Add(packet);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                    
+                }
+            }
+        }
+        
+
+        /// <summary>
+        /// 将会话中接收到的数据转换为bytes
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        //private static bool ToBytes(ISession session, out byte[] bytes)
+        //{
+        //    const int required = 16;//包头长度
+        //    //剩余长度
+        //    int remain = session.ReceivedDataLength;
+
+
+        //    if (remain >= required)
+        //    {
+        //        IntPtr bufferPtr = IntPtr.Zero;
+        //        try
+        //        {
+        //            remain -= required;
+        //            bufferPtr = Marshal.AllocHGlobal(required);
+        //            //intptr转byte[]
+        //            //bytes = new byte[required];
+        //            bytes = session.FetchData(required);
+        //            if (bytes == null)
+        //            {
+        //                return false;
+        //            }
+        //            else
+        //            {
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        bytes = default(byte[]);
+        //        return false;
+        //    }
+        //}
+    }
+}

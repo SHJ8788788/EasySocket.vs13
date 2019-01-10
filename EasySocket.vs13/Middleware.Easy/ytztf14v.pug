@@ -1,0 +1,407 @@
+﻿using EasySocket.vs13.Core;
+using EasySocket.vs13.Core.Internal;
+using EasySocket.vs13.Exceptions;
+using EasySocket.vs13.Serializers;
+using EasySocket.vs13.Tasks;
+using EasySocket.vs13.Telegram.Easy.Context;
+using HPSocketCS;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EasySocket.vs13.Telegram.Easy
+{
+    public class EasyTcpClient<T> : TcpClientBase<T>, IWrapper
+    {
+        /// <summary>
+        /// 使用HPSocketCS
+        /// </summary>
+       HPSocketCS.TcpClient client = new HPSocketCS.TcpClient();
+       private String Host { get; set; }
+       private ushort Port { get; set; }
+
+       /// <summary>
+       /// true:异步 false:同步
+       /// </summary>
+       public bool Async { get; set; }
+
+       /// <summary>
+       /// 所有Api行为
+       /// </summary>
+       private ApiActionTable apiActionTable;
+
+       /// <summary>
+       /// 数据包id提供者
+       /// </summary>
+       private PacketIdProvider packetIdProvider;
+
+       /// <summary>
+       /// 任务行为表
+       /// </summary>
+       private TaskSetterTable<long> taskSetterTable;
+
+       /// <summary>
+       /// 获取或设置序列化工具
+       /// 默认是Json序列化
+       /// </summary>
+       public ISerializer Serializer { get; set; }
+
+       /// <summary>
+       /// 获取或设置请求等待超时时间(毫秒) 
+       /// 默认30秒
+       /// </summary>
+       /// <exception cref="ArgumentOutOfRangeException"></exception>
+       public TimeSpan TimeOut { get; set; }
+       /// <summary>
+       /// 是否已连接
+       /// </summary>
+       public bool IsConnected { get { return Session.IsConnected; } }
+
+       public Action<string> MsgHandle;
+
+       public EasyTcpClient(T connId, int headerLength)
+           : base(connId, headerLength)
+       {
+           this.Init();
+       }
+       /// <summary>
+       /// 初始化
+       /// </summary>
+       private void Init()
+       {
+           #region Client初始化
+           // 设置client事件
+           client.OnPrepareConnect += new TcpClientEvent.OnPrepareConnectEventHandler(OnPrepareConnect);
+           client.OnConnect += new TcpClientEvent.OnConnectEventHandler(OnConnect);
+           client.OnSend += new TcpClientEvent.OnSendEventHandler(OnSend);
+           client.OnReceive += new TcpClientEvent.OnReceiveEventHandler(OnReceive);
+           client.OnClose += new TcpClientEvent.OnCloseEventHandler(OnClose);
+           //client.KeepAliveInterval = 5;
+           client.KeepAliveTime = 1000;
+           #endregion
+
+           this.apiActionTable = new ApiActionTable(Internal.Common.GetServiceApiActions(this.GetType()));
+           this.packetIdProvider = new PacketIdProvider();
+           this.taskSetterTable = new TaskSetterTable<long>();
+           //this.Serializer = new DefaultSerializer();
+           this.Serializer = new ProtoBufSerializer();
+           this.Async = false;
+           this.TimeOut = TimeSpan.FromSeconds(30);
+       }
+       /// <summary>
+       /// 启动客户端
+       /// </summary>
+       /// <param name="ip"></param>
+       /// <param name="port"></param>
+       public bool Connect(String ip, ushort port)
+       {
+           this.Host = ip;
+           this.Port = port;
+        
+           if (client.Connect(ip, port, Async))
+           {
+               if (Async == false)
+               {
+                   //正在运行
+                   return client.IsStarted;
+               }
+               return true;
+           }
+           else
+           {
+               return false;
+           }
+       }
+
+       /// <summary>
+       /// 停止客户端
+       /// </summary>
+       public bool Stop()
+       {
+           if (client.Stop())
+           {              
+               return true;
+           }
+           else
+           {
+               return false;
+           }
+       }
+
+       /// <summary>
+       /// 发送字节流数据数据
+       /// </summary>
+       /// <param name="bytes"></param>
+       protected override bool SendBuffer(ArraySegment<byte> byteRange)
+       {
+           if (byteRange.Count == 0)
+           {
+               return false;
+           }
+
+           // 发送
+           if (client.Send(byteRange.Array, byteRange.Count))
+           {
+               //AddMsg(string.Format("$ ({0}) Send OK --> {1}", connId, send));
+               return true;
+           }
+           else
+           {
+               //AddMsg(string.Format("$ ({0}) Send Fail --> {1} ({2})", connId, send, bytes.Length));
+               return false;
+           }           
+       }  
+
+       /// <summary>
+       /// 当接收到远程端的数据时，将触发此方法   
+       /// </summary>       
+       /// <param name="streamReader">接收到的数据读取器</param>
+       /// <returns></returns>
+       protected override Task OnReceiveAsync(IContext context)
+       {
+           var packages = this.GenerateEasyPackets(context);
+           foreach (var package in packages)
+           {
+                this.ProcessPacketAsync(package);
+           }
+           return TaskExtend.CompletedTask;
+       }
+
+       /// <summary>
+       /// 处理接收到服务发来的数据包
+       /// </summary>
+       /// <param name="packet">数据包</param>
+       private async void ProcessPacketAsync(EasyPacket packet)
+       {
+           var requestContext = new RequestContext(null, packet, null);
+           if (packet.IsException == true)
+           {
+               Internal.Common.SetApiActionTaskException(this.taskSetterTable, requestContext);
+           }
+           else if (packet.IsFromClient == true)
+           {
+               Internal.Common.SetApiActionTaskResult(requestContext, this.taskSetterTable, this.Serializer);
+           }
+           else
+           {
+               await TryProcessRequestPackageAsync(requestContext);
+           }
+       }
+
+       /// <summary>
+       /// 处理服务器请求的数据包
+       /// </summary>
+       /// <param name="requestContext">上下文</param>
+       /// <returns></returns>
+       private async Task TryProcessRequestPackageAsync(RequestContext requestContext)
+       {
+           try
+           {
+               var action = this.GetApiAction(requestContext);
+               var actionContext = new ActionContext(requestContext, action);
+               await this.ExecuteActionAsync(actionContext);
+           }
+           catch (Exception ex)
+           {
+               var exceptionContext = new ExceptionContext(requestContext, ex);
+               Internal.Common.SendRemoteException(this, exceptionContext);
+               this.OnException(requestContext.Packet, ex);
+           }
+       }
+
+        /// <summary>
+        /// 获取Api行为
+        /// </summary>
+        /// <param name="requestContext">请求上下文</param>
+        /// <exception cref="ApiNotExistException"></exception>
+        /// <returns></returns>
+        private ApiAction GetApiAction(RequestContext requestContext)
+        {
+            var action = this.apiActionTable.TryGetAndClone(requestContext.Packet.ApiName);
+            if (action != null)
+            {
+                return action;
+            }
+            throw new ApiNotExistException(requestContext.Packet.ApiName);
+        }
+
+        /// <summary>
+        /// 执行Api行为
+        /// </summary>
+        /// <param name="actionContext">上下文</param>  
+        /// <returns></returns>
+        private async Task ExecuteActionAsync(ActionContext actionContext)
+        {
+            var action = actionContext.Action;
+            var parameters = Internal.Common.GetAndUpdateParameterValues(this.Serializer, actionContext);
+            var result = await action.ExecuteAsync(this, parameters);
+
+            if (action.IsVoidReturn == false && this.client.IsStarted == true)
+            {
+                actionContext.Packet.Body = this.Serializer.Serialize(result);
+                this.TrySendPackage(actionContext.Packet);
+            }
+        }
+
+        /// <summary>
+        /// 发送数据包
+        /// </summary>
+        /// <param name="package">数据包</param>
+        /// <returns></returns>
+        private bool TrySendPackage(EasyPacket package)
+        {
+            try
+            {
+                return this.SendBuffer(package.ToArraySegment());
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///  当操作中遇到处理异常时，将触发此方法
+        /// </summary>
+        /// <param name="packet">数据包对象</param>
+        /// <param name="exception">异常对象</param> 
+        protected virtual void OnException(EasyPacket packet, Exception exception)
+        {
+        }
+
+        /// <summary>
+        /// 调用服务端实现的Api        
+        /// </summary>       
+        /// <param name="api">Api行为的api</param>
+        /// <param name="parameters">参数列表</param>          
+        /// <exception cref="SocketException"></exception> 
+        /// <exception cref="SerializerException"></exception> 
+        public void InvokeApi(string api, params object[] parameters)
+        {
+            var packet = new EasyPacket(api, this.packetIdProvider.NewId(), true);
+            packet.SetBodyParameters(this.Serializer, parameters);
+            this.SendBuffer(packet.ToArraySegment());
+        }
+
+        /// <summary>
+        /// 调用服务端实现的Api   
+        /// 并返回结果数据任务
+        /// </summary>
+        /// <typeparam name="T">返回值类型</typeparam>
+        /// <param name="api">Api行为的api</param>
+        /// <param name="parameters">参数</param>
+        /// <exception cref="SocketException"></exception>        
+        /// <exception cref="SerializerException"></exception>
+        /// <returns>远程数据任务</returns>    
+        public ApiResult<TResult> InvokeApi<TResult>(string api, params object[] parameters)
+        {
+            var id = this.packetIdProvider.NewId();
+            var packet = new EasyPacket(api, id, true);
+            packet.SetBodyParameters(this.Serializer, parameters);
+            return Internal.Common.InvokeApi<TResult>(this.UnWrap(), this.taskSetterTable, this.Serializer, packet, this.TimeOut);
+         }
+
+        /// <summary>
+        /// 断开时清除数据任务列表  
+        /// </summary>
+        protected override void OnDisconnected()
+        {
+            var taskSetActions = this.taskSetterTable.TakeAll();
+            foreach (var taskSetAction in taskSetActions)
+            {
+                var exception = new RemoteException("Disconnected");
+                taskSetAction.SetException(exception);
+            }
+        }
+
+       /// <summary>
+       /// 还原到包装前
+       /// </summary>
+       /// <returns></returns>
+       public ISession<T> UnWrap()
+       {
+           return this.Session;
+       }
+
+       #region 内部方法
+       /// <summary>
+       /// 生成数据包
+       /// </summary>
+       /// <param name="context">上下文</param>
+       /// <returns></returns>
+       private IList<EasyPacket> GenerateEasyPackets(IContext context)
+       {
+           var easyPackets = new List<EasyPacket>();       
+           //生成EasyPacket,生成失败则直接返回
+           if (EasyPacket.GenerateEasyPackets(context, out easyPackets) == false)
+           {
+               return easyPackets;
+           }
+           else if (easyPackets == null)
+           {
+               return easyPackets;
+           }
+           else
+           {
+               return easyPackets;
+           }
+       }
+        #endregion
+
+       #region 事件
+       private HandleResult OnPrepareConnect(TcpClient sender, IntPtr socket)
+       {
+           return HandleResult.Ok;
+       }
+       private HandleResult OnConnect(TcpClient sender)
+       {
+           // 已连接 到达一次
+
+           // 如果是异步联接,更新界面状态
+           //this.Invoke(new ConnectUpdateUiDelegate(ConnectUpdateUi));
+           Session.IsConnected = true;
+           return HandleResult.Ok;
+       }
+       private HandleResult OnSend(TcpClient sender, byte[] bytes)
+       {
+           // 客户端发数据了
+           //AddMsg(string.Format(" > [{0},OnSend] -> ({1} bytes)", sender.ConnectionId, bytes.Length));
+           // 数据到达了
+           return HandleResult.Ok;
+       }
+
+       private HandleResult OnReceive(TcpClient sender, byte[] bytes)
+       {
+           try
+           {   //一个connId会单独绑定一个OnReceive事件，所以不同的会话之间不会相互产生影响。
+               //而同一个会话将会产生堵塞，必需等HandleResult返回后才进行下一次OnReceive事件触发。
+               Console.WriteLine(string.Format(" > [{0},OnReceiveBegin] ->Time({1}) Length({2})", sender.ConnectionId, DateTime.Now, bytes.Length.ToString()));
+               this.Session.ReceiveData(bytes);
+               Console.WriteLine(string.Format(" > [{0},OnReceiveEnd] ->Time({1}) Length({2})", sender.ConnectionId, DateTime.Now, bytes.Length.ToString()));
+               return HandleResult.Ok;
+           }
+           catch
+           {
+               return HandleResult.Error;
+           }
+       }
+       private HandleResult OnClose(TcpClient sender, SocketOperation enOperation, int errorCode)
+       {
+           //if (errorCode == 0)
+           //    // 连接关闭了
+           //    AddMsg(string.Format(" > [{0},OnClose]", sender.ConnectionId));
+           //else
+           //    // 出错了
+           //    AddMsg(string.Format(" > [{0},OnError] -> OP:{1},CODE:{2}", sender.ConnectionId, enOperation, errorCode));
+
+           //// 通知界面,只处理了连接错误,也没进行是不是连接错误的判断,所以有错误就会设置界面
+           //// 生产环境请自己控制
+           //this.Invoke(new SetAppStateDelegate(SetAppState), AppState.Stoped);
+           Session.IsConnected = false;
+           return HandleResult.Ok;
+       }
+       #endregion  
+    }
+}

@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{89E6A40C-BDDD-4835-B9E8-7585274E7E51}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EasySocket.vs13</RootNamespace>
+    <AssemblyName>EasySocket.vs13</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\x86\Debug\EasySocket\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HPSocketCS">
+      <HintPath>..\dllOther\HPSocketCS.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.3.0\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\ApiKey.cs" />
+    <Compile Include="HeaderOrBodyCodes.cs" />
+    <Compile Include="ISessionExtra.cs" />
+    <Compile Include="Middleware.Easy\IEasyApiService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Networking\DefaultTag.cs" />
+    <Compile Include="Plugs\EasySocketPlug.cs" />
+    <Compile Include="Plugs\PlugBase.cs" />
+    <Compile Include="Plugs\SessionIdlePlug.cs" />
+    <Compile Include="Session\TcpSessionClient.cs" />
+    <Compile Include="Session\TcpSessionDefault.cs" />
+    <Compile Include="Core\ApiAction.cs" />
+    <Compile Include="Core\ApiAttribute.cs" />
+    <Compile Include="Core\ApiParameter.cs" />
+    <Compile Include="Core\ApiResult.cs" />
+    <Compile Include="Core\FilterAttribute.cs" />
+    <Compile Include="Core\IActionContext.cs" />
+    <Compile Include="Core\IApiResult.cs" />
+    <Compile Include="Core\ICloneable.cs" />
+    <Compile Include="Core\IDependencyResolver.cs" />
+    <Compile Include="Core\IExceptionContext.cs" />
+    <Compile Include="Core\IFilter.cs" />
+    <Compile Include="Core\IFilterAttributeProvider.cs" />
+    <Compile Include="Core\IGlobalFilters.cs" />
+    <Compile Include="Core\Internal\ApiActionTable.cs" />
+    <Compile Include="Core\Internal\DefaultDependencyResolver.cs" />
+    <Compile Include="Core\Internal\DefaultFilterAttributeProvider.cs" />
+    <Compile Include="Core\Internal\DomainAssembly.cs" />
+    <Compile Include="Core\Internal\GlobalFiltersBase.cs" />
+    <Compile Include="Core\ParameterFilterAttribute.cs" />
+    <Compile Include="Exceptions\ApiExecuteException.cs" />
+    <Compile Include="Exceptions\ApiNotExistException.cs" />
+    <Compile Include="Exceptions\ResolveException.cs" />
+    <Compile Include="Serializers\DefaultSerializer.cs" />
+    <Compile Include="Core\Internal\PacketIdProvider.cs" />
+    <Compile Include="Core\Internal\ProtoBuffSerializer.cs" />
+    <Compile Include="Core\ISerializer.cs" />
+    <Compile Include="Networking\DefaultContext.cs" />
+    <Compile Include="Endians.cs" />
+    <Compile Include="Exceptions\RemoteException.cs" />
+    <Compile Include="Exceptions\SerializerException.cs" />
+    <Compile Include="IContext.cs" />
+    <Compile Include="IListener.cs" />
+    <Compile Include="IMiddleware.cs" />
+    <Compile Include="IPlug.cs" />
+    <Compile Include="ISession.cs" />
+    <Compile Include="ISessionManager.cs" />
+    <Compile Include="ISessionStreamReader.cs" />
+    <Compile Include="ITag.cs" />
+    <Compile Include="IWrapper.cs" />
+    <Compile Include="Networking\DefaultMiddleware.cs" />
+    <Compile Include="Networking\MiddlewareManager.cs" />
+    <Compile Include="Networking\PlugManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol.cs" />
+    <Compile Include="Reflection\Method.cs" />
+    <Compile Include="Reflection\Property.cs" />
+    <Compile Include="Serializers\ProtoBufSerializer.cs" />
+    <Compile Include="Networking\SessionExtra.cs" />
+    <Compile Include="Stream\SessionStream.cs" />
+    <Compile Include="Stream\SessionStreamReader.cs" />
+    <Compile Include="TagItem.cs" />
+    <Compile Include="Tasks\Dispatcher.cs" />
+    <Compile Include="Tasks\ITaskSetter.cs" />
+    <Compile Include="Tasks\SyncTaskSetter.cs" />
+    <Compile Include="Tasks\TaskExtend.cs" />
+    <Compile Include="Tasks\TaskSetter.cs" />
+    <Compile Include="Tasks\TaskSetterTable.cs" />
+    <Compile Include="Socket\TcpListenerHP.cs" />
+    <Compile Include="Socket\TcpListenerBase.cs" />
+    <Compile Include="Networking\TcpSessionBase.cs" />
+    <Compile Include="Networking\TcpSessionManager.cs" />
+    <Compile Include="Middleware.Easy\Context\ActionContext.cs" />
+    <Compile Include="Middleware.Easy\Context\ExceptionContext.cs" />
+    <Compile Include="Middleware.Easy\Context\RequestContext.cs" />
+    <Compile Include="Middleware.Easy\EasyApiService.cs" />
+    <Compile Include="Middleware.Easy\EasyFilterAttribute.cs" />
+    <Compile Include="Middleware.Easy\EasyLogFilter.cs" />
+    <Compile Include="Middleware.Easy\EasyMiddleware.cs" />
+    <Compile Include="Middleware.Easy\EasyPacket.cs" />
+    <Compile Include="Middleware.Easy\EasySession.cs" />
+    <Compile Include="Middleware.Easy\EasyTcpClient.cs" />
+    <Compile Include="Middleware.Easy\Internal\Common.cs" />
+    <Compile Include="Middleware.Easy\Internal\EasyGlobalFilters.cs" />
+    <Compile Include="Util\ByteBuilder.cs" />
+    <Compile Include="Util\ByteConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\HPSocket4C-SSL.dll" />
+    <Content Include="Lib\HPSocket4C-SSL_D.dll" />
+    <Content Include="Lib\HPSocket4C-SSL_U.dll" />
+    <Content Include="Lib\HPSocket4C-SSL_UD.dll" />
+    <Content Include="Lib\HPSocket4C_D.dll" />
+    <Content Include="Lib\HPSocket4C_U.dll" />
+    <Content Include="Lib\HPSocket4C_UD.dll" />
+    <Content Include="说明.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Log4Ex\Log4Ex.csproj">
+      <Project>{e40a3025-c1be-4139-adb7-5975b4ec25a3}</Project>
+      <Name>Log4Ex</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /e/r /y $(SolutionDir)\Lib $(ProjectDir)$(OutDir)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
