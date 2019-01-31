@@ -7,8 +7,8 @@
     <ProjectGuid>{E5365F24-B020-4557-AB1B-C39F55F64AFA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DLL3</RootNamespace>
-    <AssemblyName>Dll3</AssemblyName>
+    <RootNamespace>DllBase</RootNamespace>
+    <AssemblyName>DllBase</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SqlSugar">
-      <HintPath>..\..\SqlSugar-dev\Src\Asp.Net\SqlSugar\bin\Debug\SqlSugar.dll</HintPath>
+    <Reference Include="SqlSugar, Version=4.9.8.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\sqlSugar.4.9.8.1\lib\SqlSugar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,8 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class2.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="ClassForClient.cs" />
+    <Compile Include="ClassBase.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Models\items.cs" />
     <Compile Include="Models\orderdetail.cs" />
@@ -51,12 +51,9 @@
     <Compile Include="Models\user.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SugarDao.cs" />
+    <Compile Include="Models\userinfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DllOpc\DllOpc.csproj">
-      <Project>{620400f5-1f56-43ec-8238-78d10abc516c}</Project>
-      <Name>DllOpc</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EasySocket.vs13\EasySocket.vs13.csproj">
       <Project>{89e6a40c-bddd-4835-b9e8-7585274e7e51}</Project>
       <Name>EasySocket.vs13</Name>
@@ -69,6 +66,12 @@
       <Project>{ac838723-d1eb-4767-bcb5-9a73aea0cecc}</Project>
       <Name>Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TagEvent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

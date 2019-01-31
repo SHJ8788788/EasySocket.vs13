@@ -109,7 +109,7 @@ namespace EasySocket.vs13.Plugs
         /// <returns></returns>
         protected virtual bool FilterContext(IContext context)
         {
-            var tag =  context.Session.Extra.Tag.Get("Category");              
+            var tag =  context.Session.Extra.Tag.Get("category");              
             //此处可以根据context中的客户端信息区分，对一般用户设定超时时间，对中间件\OPC则不需要
             if (tag.IsNull)
             {

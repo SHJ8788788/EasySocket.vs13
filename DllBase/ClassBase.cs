@@ -1,5 +1,4 @@
-﻿using Dll3;
-using EasySocket.vs13.Core;
+﻿using EasySocket.vs13.Core;
 using Log4Ex;
 using EasySocket.vs13.Telegram.Easy;
 using Models;
@@ -8,26 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DllOpc;
 
-namespace Dll3
+namespace DllBase
 {
-    public class Class1 : EasyApiService, IOpc
+    /// <summary>
+    /// 基础服务
+    /// 提供用户登陆、注销等操作
+    /// 会话分类Category:
+    /// client 客户端用户会话
+    /// opc    opc会话
+    /// </summary>
+    public class ClassBase : EasyApiService
     {
-        /// <summary>
-        /// Opc访问，需要继承IOpc
-        /// 为保证Session安全，必须通过传入OpcSession访问Opc
-        /// </summary>
-        EasySession IOpc.OpcSession
-        {
-            get
-            {
-                //get { return this.CurrentContext.EasySessionByFilter("opc"); }
-                //return this.CurrentContext.Session;
-                return this.CurrentContext.EasySessionByFilter("Category","opc");
-            }
-        }
-
         /// <summary>
         /// 获取其它已登录的会话
         /// </summary>
@@ -61,13 +52,26 @@ namespace Dll3
             {
                 session.InvokeApi("LoginNotify", 1, user.Account);
             }        
-            CurrentContext.Session.Tag.Set("Logined", true);
+            CurrentContext.Session.Tag.Set("logined", true);
             CurrentContext.Session.Tag.Set("account", user.Account);
-            var users = SugarDao.Instance.Queryable<user>().ToList();
-            var userName = users.FirstOrDefault().username;
-            Console.WriteLine(userName.ToString());
-            var msg = string.Format(" > [user:{0} Login Success] ->Time({1})", user.Account + " " + userName, DateTime.Now);           
-            return new LoginResult { State = true, Message = msg };
+            CurrentContext.Session.Tag.Set("category", "client");
+            userInfo newUser;
+            string msg;
+            using (var db = SugarDao.Instance)
+            {
+                newUser = db.Queryable<userInfo>().Where(p => p.usercode == user.Account&&p.password==user.Password).First();
+            }
+            if (newUser != null)
+            {
+                Console.WriteLine(newUser.name.ToString());
+                msg = string.Format(" > [user:{0} Login Success] ->Time({1})", newUser.usercode + " " + newUser.name, DateTime.Now);
+                return new LoginResult { State = true, Message = msg };
+            }
+            else
+            {
+                msg = string.Format(" > [user:{0} Login Failture] ->Time({1})", user.Account + " " + user.Name, DateTime.Now);
+                return new LoginResult { State = false, Message = msg };
+            }            
         }
 
         /// <summary>
@@ -80,42 +84,35 @@ namespace Dll3
         [EasyLogFilter("登出操作")]
         public LoginResult Logoff(UserInfo user, bool ifAdmin)
         {
-            //var validResult = Model.ValidFor(user);
-            //if (validResult.State == false)
-            //{
-            //    return new LoginResult { Message = validResult.ErrorMessage };
-            //}
             // 通知其它fast会话有新成员登录
             foreach (var session in this.OtherSessions)
             {
                 session.InvokeApi("LoginNotify", 0, user.Account);
             }
 
-            CurrentContext.Session.Tag.Set("Logined", false);
-            CurrentContext.Session.Tag.Remove("account");
-            var msg = string.Format(" > [user:{0} Login Off] ->Time({1})", user.Account, DateTime.Now);
-            return new LoginResult { State = false, Message = msg };
+            CurrentContext.Session.Tag.Set("logined", false);
+            bool success = CurrentContext.Session.Tag.Remove("account");
+            if (success)
+            {
+                var msg = string.Format(" > [user:{0} Login Off Success] ->Time({1})", user.Account, DateTime.Now);
+                return new LoginResult { State = true, Message = msg };
+            }
+            else
+            {
+                var msg = string.Format(" > [user:{0} Login Off Failture] ->Time({1})", user.Account, DateTime.Now);
+                return new LoginResult { State = false, Message = msg };
+            }
+           
         } 
   
         [Api]
         [EasyLogFilter("设置通讯类别")]
         public bool Verification(string msg)
         {
-            this.CurrentContext.Session.Tag.Set("Category", "opc");
+            this.CurrentContext.Session.Tag.Set("category", msg);
             return true;
         }
 
-        /// <summary>
-        /// 取值操作
-        /// </summary>       
-        /// <param name="list">tag值</param>
-        /// <returns></returns>    
-        [Api]
-        [EasyLogFilter("取值操作")]
-        public List<TagSimple> GetTags(List<string> list)
-        {
-            return  this.OpLinkGetTags(list);
-        }
         /// <summary>
         /// 登出操作
         /// </summary>       
@@ -123,24 +120,25 @@ namespace Dll3
         /// <param name="ifAdmin"></param>
         /// <returns></returns>    
         [Api]
-        [EasyLogFilter("登出操作")]
+        [EasyLogFilter("登出操作-测试用")]
         public LoginResult LogTest(List<UserInfo> users, bool ifAdmin)
         {
-            CurrentContext.Session.Tag.Set("Logined", false);
+            CurrentContext.Session.Tag.Set("logined", false);
             CurrentContext.Session.Tag.Remove("account");
             var msg = string.Format(" > [user:{0} Login Off] ->Time({1})", users.FirstOrDefault().Account, DateTime.Now);
-            var result = this.OpLinkTagValue("RandomXaxis");
-            int resultMax = this.OpLinkTagValueMaxBetweenDate("RandomXaxis", DateTime.Now.AddSeconds(-10));
-            List<TagSimple> list = this.OpLinkGetTags(new List<string> { "RandomXaxis", "RandomYaxis", "Random3" });
-            Console.WriteLine(result);
-            return new LoginResult { State = false, Message = msg + result + resultMax };
+            //var result = this.OpLinkTagValue("RandomXaxis");
+            //int resultMax = this.OpLinkTagValueMaxBetweenDate("RandomXaxis", DateTime.Now.AddSeconds(-10));
+            //List<TagSimple> list = this.OpLinkGetTags(new List<string> { "RandomXaxis", "RandomYaxis", "Random3" });
+            //Console.WriteLine(result);
+            //return new LoginResult { State = false, Message = msg + result + resultMax };
+            return new LoginResult { State = false, Message = msg };
         }
 
         [Api]
-        [EasyLogFilter("登出操作")]
+        [EasyLogFilter("登出操作-测试用")]
         public LoginResult Log2StringTest(List<string> users, bool ifAdmin)
         {
-            CurrentContext.Session.Tag.Set("Logined", false);
+            CurrentContext.Session.Tag.Set("logined", false);
             CurrentContext.Session.Tag.Remove("account");
             var msg = string.Format(" > [user:{0} Login Off] ->Time({1})", users, DateTime.Now);
             return new LoginResult { State = false, Message = msg };

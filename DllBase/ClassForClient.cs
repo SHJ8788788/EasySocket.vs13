@@ -1,5 +1,4 @@
-﻿using Dll3;
-using EasySocket.vs13.Core;
+﻿using EasySocket.vs13.Core;
 using EasySocket.vs13.Telegram.Easy;
 using Log4Ex;
 using Models;
@@ -12,9 +11,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Dll3
+namespace DllBase
 {
-    public class Class2 : EasyApiService
+    public class ClassForClient : EasyApiService
     {        
         /// <summary>
         /// 获取服务组件版本号

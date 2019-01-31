@@ -42,6 +42,7 @@
     <Compile Include="ClassOpc.cs" />
     <Compile Include="IOpc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TagEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasySocket.vs13\EasySocket.vs13.csproj">
