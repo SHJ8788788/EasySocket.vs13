@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\x86\Debug\Server\Api\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,12 +39,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassOpc.cs" />
+    <Compile Include="OpcEx.cs" />
     <Compile Include="IOpc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TagEvent.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DllBase\DllBase.csproj">
+      <Project>{e5365f24-b020-4557-ab1b-c39f55f64afa}</Project>
+      <Name>DllBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EasySocket.vs13\EasySocket.vs13.csproj">
       <Project>{89e6a40c-bddd-4835-b9e8-7585274e7e51}</Project>
       <Name>EasySocket.vs13</Name>

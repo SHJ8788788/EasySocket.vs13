@@ -58,34 +58,50 @@ namespace Log4Ex
             log.Fatal(message);
         }  
         #region 平台Filter专用
-        public static void MethodBegin(string methodName)
+        /// <summary>
+        /// 调用函数前
+        /// </summary>
+        /// <param name="methodName">函数名</param>
+        /// <param name="UniqueIdentifier">唯一标识</param>
+        public static void MethodBegin(string methodName,string UniqueIdentifier="")
         {
             var log = GetCustomLoggerByFileName(methodName);
             if (log == null)
             {
                 return;
             }
-            string message = "Method:[" + methodName + "]  Msg: " + "*******Begin*******************";
+            string message = "Method:[" + methodName + "] Guid:[" + UniqueIdentifier + "]  Msg: " + "*******Begin*******************";
             log.Info(message);
         }
-        public static void MethodEnd(string methodName)
+        /// <summary>
+        /// 调用函数后
+        /// </summary>
+        /// <param name="methodName">函数名</param>
+        /// <param name="UniqueIdentifier">唯一标识</param>
+        public static void MethodEnd(string methodName,string UniqueIdentifier = "")
         {
             var log = GetCustomLoggerByFileName(methodName);
             if (log == null)
             {
                 return;
             }
-            string message = "Method:[" + methodName + "]  Msg: " + "*******End*********************";
+            string message = "Method:[" + methodName + "] Guid:[" + UniqueIdentifier + "]  Msg: " + "*******End*********************";
             log.Info(message);
         }
-        public static void MethodException(string methodName,string errorDesc)
+        /// <summary>
+        /// 调用函数发生异常后捕获
+        /// </summary>
+        /// <param name="methodName">函数名</param>
+        /// <param name="errorDesc">异常描述</param>
+        /// <param name="UniqueIdentifier">唯一标识</param>
+        public static void MethodException(string methodName,string errorDesc, string UniqueIdentifier = "")
         {
             var log = GetCustomLoggerByFileName(methodName);
             if (log == null)
             {
                 return;
             }
-            string messageDesc = "Method:[" + methodName + "]  Msg: " + errorDesc;            
+            string messageDesc = "Method:[" + methodName + "] Guid:["+ UniqueIdentifier + "]  Msg: " + errorDesc;            
             string message = "Method:[" + methodName + "]  Msg: " + "*******End with Exception*******";
             log.Error(messageDesc);
             log.Error(message);

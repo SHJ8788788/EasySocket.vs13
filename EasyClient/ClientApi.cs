@@ -18,16 +18,50 @@ namespace EasyClient
     /// </summary>
     public class ClientApi:EasyTcpClient
     {    
+        /// <summary>
+        /// 上线通知
+        /// </summary>
+        /// <param name="name"></param>
         [Api]
-        public void LoginNotify(int action, string name)
+        public void LoginNotify(string name)
         {
-            string msg = name + (action == 0 ? "下线了！！" : "上线了！！");
+            string msg = name + "上线了！！";
+            Instance.MsgHandle(msg);
+        }
+        /// <summary>
+        /// 下线通知
+        /// </summary>
+        /// <param name="name"></param>
+        [Api]
+        public void LogoffNotify(string name)
+        {
+            string msg = name + "下线了！！";
             Instance.MsgHandle(msg);
         }
         [Api]
         public int GetTemp()
         {
             return 1000;
+        }
+
+        /// <summary>
+        /// 加热炉炉内发生变化
+        /// </summary>
+        /// <param name="message"></param>
+        [Api]
+        public void FurnChanged(string message)
+        {
+            Instance.MsgHandle(message);
+        }
+
+        /// <summary>
+        /// 加热炉炉内发生变化
+        /// </summary>
+        /// <param name="message"></param>
+        [Api]
+        public void MillChanged(string message)
+        {
+            Instance.MsgHandle(message);
         }
     }
 }

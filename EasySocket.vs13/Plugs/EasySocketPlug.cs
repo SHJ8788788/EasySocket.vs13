@@ -46,7 +46,7 @@ namespace EasySocket.vs13.Plugs
             // 推送成员下线通知
             foreach (var item in easySessions)
             {
-                item.InvokeApi("LoginNotify", 0, account.Value.ToString());
+                item.InvokeApi("LogoffNotify", account.Value.ToString());
             }
         }
     }

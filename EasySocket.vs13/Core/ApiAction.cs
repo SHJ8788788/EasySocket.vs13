@@ -52,6 +52,11 @@ namespace EasySocket.vs13.Core
         public ApiParameter[] Parameters { get; protected set; }
 
         /// <summary>
+        /// 唯一标识符
+        /// </summary>
+        public string UniqueIdentifier { get; protected set; }
+
+        /// <summary>
         /// Api行为
         /// </summary>
         protected ApiAction()
@@ -195,6 +200,7 @@ namespace EasySocket.vs13.Core
                 Method = this.Method,
                 IsTaskReturn = this.IsTaskReturn,
                 IsVoidReturn = this.IsVoidReturn,
+                UniqueIdentifier = Guid.NewGuid().ToString(),
                 DeclaringService = this.DeclaringService,
                 Parameters = this.Parameters.Select(p => new ApiParameter(p.Info)).ToArray(),
                 Key = new ApiKey(this.ApiName, this.Parameters)

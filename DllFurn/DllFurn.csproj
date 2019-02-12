@@ -9,15 +9,16 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DllFurn</RootNamespace>
     <AssemblyName>DllFurn</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\x86\Debug\Server\Api\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SqlSugar, Version=4.9.8.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\sqlSugar.4.9.8.1\lib\SqlSugar.dll</HintPath>
+    <Reference Include="SqlSugar, Version=4.9.7.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\sqlSugar.4.9.7.5\lib\SqlSugar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,6 +53,14 @@
       <Project>{e5365f24-b020-4557-ab1b-c39f55f64afa}</Project>
       <Name>DllBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DllClient\DllClient.csproj">
+      <Project>{83d2d076-d2f0-4087-bf93-3e1212c1a43c}</Project>
+      <Name>DllClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DllOpc\DllOpc.csproj">
+      <Project>{620400f5-1f56-43ec-8238-78d10abc516c}</Project>
+      <Name>DllOpc</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EasySocket.vs13\EasySocket.vs13.csproj">
       <Project>{89e6a40c-bddd-4835-b9e8-7585274e7e51}</Project>
       <Name>EasySocket.vs13</Name>
@@ -67,6 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\Oracle.ManagedDataAccess.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

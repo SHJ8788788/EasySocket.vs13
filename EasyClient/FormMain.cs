@@ -235,9 +235,9 @@ namespace EasyClient
         {
                 try
                 {
-                    Random rm = new Random();
-                    string ra = rm.Next(1000).ToString();
-                    passwordFromDialog += ra;
+                    //Random rm = new Random();
+                    //string ra = rm.Next(1000).ToString();
+                    //passwordFromDialog += ra;
                     //this.tbUser.Text = this.tbUser.Text.Substring(0, 5) + ra;
                     user = new UserInfo { Account = userNameFromDialog, Password = passwordFromDialog };
 

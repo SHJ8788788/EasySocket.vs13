@@ -84,8 +84,7 @@ namespace EasySocket.vs13.Core.Internal
         {
             ApiAction apiAction;
             if (this.dictionary.TryGetValue(key, out apiAction))
-            {
-                var test = ((ICloneable<ApiAction>)apiAction).CloneConstructor();
+            {                
                 return ((ICloneable<ApiAction>)apiAction).CloneConstructor();               
             }
             return null;
