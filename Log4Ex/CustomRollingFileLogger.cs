@@ -26,7 +26,8 @@ namespace Log4Ex
         //默认配置  
         private const int MAX_SIZE_ROLL_BACKUPS = 20;
         //private const string LAYOUT_PATTERN = "%d [%-5t] %-5p %c  - %m%n";  
-        private const string LAYOUT_PATTERN = "%d [%-5t] %-5p - %m%n";  
+        //private const string LAYOUT_PATTERN = "%d [%-5t] %-5p - %m%n";  
+        private const string LAYOUT_PATTERN = "%d %-5p - %m%n";
         private const string DATE_PATTERN = "yyyyMMdd\".txt\"";  
         private const string MAXIMUM_FILE_SIZE = "256MB";  
         private const string LEVEL = "debug";  
@@ -245,13 +246,57 @@ namespace Log4Ex
         /// <returns></returns>
         protected static string GetMethodName()
         {
-            StackTrace stackTrace = new StackTrace();
-            StackFrame stackFrame = stackTrace.GetFrame(2);
-            MethodBase methodBase = stackFrame.GetMethod();
-            // Displays “WhatsmyName”,(下一行如果不写的话,会引发异常)
-            //Console.WriteLine(" Parent Method Name {0} n", methodBase.Name);
-            return methodBase.Name;
+            //StackTrace stackTrace = new StackTrace();
+            //StackFrame stackFrame = stackTrace.GetFrame(2);
+            //MethodBase methodBase = stackFrame.GetMethod();
+            //// Displays “WhatsmyName”,(下一行如果不写的话,会引发异常)
+            ////Console.WriteLine(" Parent Method Name {0} n", methodBase.Name);
+            //return methodBase.Name;
+
+            //当前堆栈信息
+            System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
+            System.Diagnostics.StackFrame[] sfs = st.GetFrames();
+            //过虑的方法名称,以下方法将不会出现在返回的方法调用列表中
+            string _filterdName = "Debug,Info,Fatal,Error";
+            string _fullName = string.Empty, _methodName = string.Empty;
+            for (int i = 1; i < sfs.Length; ++i)
+            {
+                //非用户代码,系统方法及后面的都是系统调用，不获取用户代码调用结束
+                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == sfs[i].GetILOffset()) break;
+                _methodName = sfs[i].GetMethod().Name;//方法名称
+                                                      //sfs[i].GetFileLineNumber();//没有PDB文件的情况下将始终返回0
+                if (_filterdName.Contains(_methodName)) continue;
+                _fullName = _methodName + "()->" + _fullName;
+            }
+            st = null;
+            sfs = null;
+            _filterdName = _methodName = null;
+            return _fullName.TrimEnd('-', '>');
         }
+
+        protected static string GetStackTraceModelName()
+        {
+            //当前堆栈信息
+            System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
+            System.Diagnostics.StackFrame[] sfs = st.GetFrames();
+            //过虑的方法名称,以下方法将不会出现在返回的方法调用列表中
+            string _filterdName = "";
+            string _fullName = string.Empty, _methodName = string.Empty;
+            for (int i = 1; i < sfs.Length; ++i)
+            {
+                //非用户代码,系统方法及后面的都是系统调用，不获取用户代码调用结束
+                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == sfs[i].GetILOffset()) break;
+                _methodName = sfs[i].GetMethod().Name;//方法名称
+                                                      //sfs[i].GetFileLineNumber();//没有PDB文件的情况下将始终返回0
+                if (_filterdName.Contains(_methodName)) continue;
+                _fullName = _methodName + "()->" + _fullName;
+            }
+            st = null;
+            sfs = null;
+            _filterdName = _methodName = null;
+            return _fullName.TrimEnd('-', '>');
+        }
+
         /// <summary>
         /// 记录日志时，通过栈查询lambda初始调用的方法，并以函数名做为日志文件名
         /// </summary>
@@ -259,7 +304,7 @@ namespace Log4Ex
         protected static string GetFileName()
         {
             StackTrace st = new StackTrace(1, true);//跳过给定的帧数
-            string methodName = "";
+            string methodName = string.Empty;
             for (int i = 0; i < st.FrameCount; i++)
             {
                 StackFrame sf = st.GetFrame(i);
@@ -268,7 +313,6 @@ namespace Log4Ex
                     break;
                 }
                 methodName = sf.GetMethod().Name;
-                //Console.WriteLine("Method: {0}", sf.GetMethod().Name);
             }
             return methodName;
         }

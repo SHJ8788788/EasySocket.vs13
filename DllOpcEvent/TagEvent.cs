@@ -1,9 +1,11 @@
 ﻿using DllBase;
+using DllCoil;
 using DllFurn;
 using DllMill;
 using DllOpc;
 using EasySocket.vs13.Core;
 using EasySocket.vs13.Telegram.Easy;
+using Log4Ex;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -62,34 +64,80 @@ namespace DllOpcEvent
         [EasyLogFilter("事件发生变化")]
         public bool TagEventChange(TagSimple tag)
         {
-            Console.WriteLine("事件:" + tag.TagName + "值:" + tag.TagValue.ToString());
-            if (tag.TagName== "PL_RULU"&& tag.ValueCast<bool>()==true)
-            {
-               this.FurnIn();
+            LogHelper.Info($"TagName:{tag.TagName} TagValue:{tag.ValueCast<string>()}");   
+            //加热炉入炉
+            if (tag.TagName== "JRL_RL"&& tag.ValueCast()==true)
+            {              
+               this.FurnIn();               
             }
-            else if (tag.TagName == "JRL_CHUGANG" && tag.ValueCast<bool>() == true)
+            //加热炉出炉
+            else if (tag.TagName == "JRL_CL" && tag.ValueCast() == true)
             {
                this.FurnOut();
             }
-            //粗轧开始
-            else if (tag.TagName == "H1YAOGANG" && tag.ValueCast<bool>() == true)
+            //粗轧咬钢信号-轧制开始
+            else if (tag.TagName == "H1YAOGANG" && tag.ValueCast() == true)
+            {
+                this.Mill1ActionYaoGang();
+            }
+            //1号轧机抛钢信号信号
+            else if (tag.TagName == "H1YAOGANG" && tag.ValueCast() == false)
             {
                 this.Mill1ActionPaoGang();
             }
-            //中轧轧开始7号机架咬钢信号
-            else if (tag.TagName == "H7YAOGANG" && tag.ValueCast<bool>() == true)
+            //粗轧抛钢信号
+            else if (tag.TagName == "H6YAOGANG" && tag.ValueCast() == false)
             {
-
+                this.Mill6ActionPaoGang();
+            }
+            //中轧开始7号机架咬钢信号
+            else if (tag.TagName == "H7YAOGANG" && tag.ValueCast() == true)
+            {
+                this.Mill7ActionYaoGang();
+            }
+            //中轧结束12号机架抛钢信号
+            else if (tag.TagName == "H12YAOGANG" && tag.ValueCast() == false)
+            {
+                this.Mill12ActionPaoGang();
             }
             //预精轧开始13号机架咬钢信号
-            else if (tag.TagName == "H13YAOGANG" && tag.ValueCast<bool>() == true)
+            else if (tag.TagName == "H13YAOGANG" && tag.ValueCast() == true)
             {
-
+                this.Mill13ActionYaoGang();
             }
-            //精轧18号机架抛钢信号
-            else if (tag.TagName == "H18YAOGANG" && tag.ValueCast<bool>() == false)
+            //预精轧开始18号机架抛钢信号
+            else if (tag.TagName == "H18YAOGANG" && tag.ValueCast() == false)
             {
-                this.Mill18ActionYaoGang();
+                this.Mill18ActionPaoGang();
+            }
+            //精轧机咬钢信号
+            else if (tag.TagName == "JZYAOGANG" && tag.ValueCast() == true)
+            {
+                this.JZActionYaoGang();
+            }
+            //精轧机抛钢信号
+            else if (tag.TagName == "JZYAOGANG" && tag.ValueCast() == false)
+            {
+                this.JZActionPaoGang();
+            }
+            //吐丝机咬钢信号
+            else if (tag.TagName == "TSYAOGANG" && tag.ValueCast() == true)
+            {
+                
+            }
+            //吐丝机抛钢信号--轧制结束
+            else if (tag.TagName == "TSYAOGANG" && tag.ValueCast() == false)
+            {
+                this.TSActionPaoGang();
+            }
+            //集卷上钩
+            else if (tag.TagName== "HookA")
+            {
+                this.CoilHookFinish(tag.ValueCast<int>());
+            }
+            else
+            {
+                LogHelper.Info($"TagName:{tag.TagName},TagValue:{tag.TagValue.ToString()} 不存在可用的函数或信号未能处理");
             }
             return true;            
         }

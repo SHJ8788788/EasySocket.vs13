@@ -79,7 +79,7 @@ namespace DllBase
             }
             if (newUser != null)
             {
-                Console.WriteLine(newUser.name.ToString());
+                //Console.WriteLine(newUser.name.ToString());
                 msg = string.Format(" > [user:{0} Login Success] ->Time({1})", newUser.usercode + " " + newUser.name, DateTime.Now);
                 return new LoginResult { State = true, Message = msg };
             }

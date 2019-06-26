@@ -110,22 +110,30 @@ namespace EasySocket.vs13
         }
         HandleResult OnAcceptHP(IntPtr connId, IntPtr pClient)
         {
-
-            // 客户进入了
-            // 获取客户端ip和端口
-            string ip = string.Empty;
-            ushort port = 0;
-            if (server.GetRemoteAddress(connId, ref ip, ref port))
-            {                
-                var result = base.OnAcceptAsync(connId, ip, port);
-                Console.WriteLine(string.Format(" > [{0},OnAccept] -> PASS({1}:{2}) ->Result({3})", connId, ip.ToString(), port,result.ToString()));
-                return result == true ? HandleResult.Ok : HandleResult.Error;
-            }
-            else
+            try
             {
-                Console.WriteLine(string.Format(" > [{0},OnAccept] -> Server_GetClientAddress() Error", connId));
-                return HandleResult.Error;
+                // 客户进入了
+                // 获取客户端ip和端口
+                string ip = string.Empty;
+                ushort port = 0;
+                if (server.GetRemoteAddress(connId, ref ip, ref port))
+                {
+                    var result = base.OnAcceptAsync(connId, ip, port);
+                    Console.WriteLine(string.Format(" > [{0},OnAccept] -> PASS({1}:{2}) ->Result({3})", connId.ToString(), ip.ToString(), port, result.ToString()));
+                    return result == true ? HandleResult.Ok : HandleResult.Error;
+                }
+                else
+                {
+                    Console.WriteLine(string.Format(" > [{0},OnAccept] -> Server_GetClientAddress() Error", connId));
+                    return HandleResult.Error;
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(string.Format(" > [{0},OnAccept] -> Server_GetClientAddress() Error,Message:{1}", connId,ex.ToString()));
+                return HandleResult.Error;                
+            }
+         
         }
         HandleResult OnSendHP(IntPtr connId, byte[] bytes)
         {
@@ -146,6 +154,7 @@ namespace EasySocket.vs13
         }
         HandleResult OnCloseHP(IntPtr connId, SocketOperation enOperation, int errorCode)
         {
+            Console.WriteLine(string.Format(" > [{0},OnClose] ", connId.ToString()));
             base.OnClose(connId, enOperation, errorCode);
             return HandleResult.Ok;
         }

@@ -18,8 +18,11 @@ namespace DllCoil
     /// </summary>
     public static class ClassHook
     {
-        [Api]
-        [EasyLogFilter("PF线集卷上钩")]
+        /// <summary>
+        /// PF线集卷-上钩 HookA
+        /// </summary>
+        /// <param name="opc"></param>
+        /// <param name="hookNo"></param>
         public static void CoilHookFinish(this IOpc opc,int hookNo)
         {
             // 通知其它fast会话加热炉发生变化
@@ -27,7 +30,7 @@ namespace DllCoil
             //{
             //    session.InvokeApi("LoginNotify", 1, user.Account);
             //}
-            LogHelper.Debug($"PF线集卷上钩，钩号{hookNo}");
+            LogHelper.Info($"PF线集卷上钩，钩号{hookNo}");
             using (var db = SugarDao.Instance)
             {
                 try
@@ -35,8 +38,8 @@ namespace DllCoil
                     //钩号
                     var hookNoP = new SugarParameter("@p_hookno", hookNo);
                     //支持output
-                    var retvalP1 = new SugarParameter("@retval", null, true);//isOutput=true
-                    db.Ado.UseStoredProcedure().GetInt("sgis_track.finish_hook", retvalP1);
+                    var retvalP = new SugarParameter("@retval", null, true);//isOutput=true
+                    var succ = db.Ado.UseStoredProcedure().GetInt("sgis_track.finish_hook", hookNoP, retvalP);
 
                     //DBOleDb.ExecutePorcedure("sgis_track.update_millspd", new OleDbParameter[] { op2, op3, op4, op5, op1 }); //更新粗轧入口速度
                     //DBOleDb.ExecutePorcedure("sgis_track.update_milltm", new OleDbParameter[] { op2, op3, op6, op7, op1 });//更新粗轧入口温度 

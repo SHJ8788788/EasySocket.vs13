@@ -90,7 +90,6 @@ namespace DllClient
         [EasyLogFilter("打印返回信息")]
         public string GetMessage(String message)
         {
-            Console.WriteLine(message);
             LogHelper.Debug("123123123123123213");
             return "通过服务端认证后返回：" + message;
         }

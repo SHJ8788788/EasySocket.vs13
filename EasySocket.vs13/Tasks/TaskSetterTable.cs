@@ -57,7 +57,7 @@ namespace EasySocket.vs13.Tasks
         /// <returns></returns>
         public TaskSetter<TResult> Create<TResult>(T id)
         {
-            Console.WriteLine(id.ToString());
+            //Console.WriteLine(id.ToString());
             Action<ITaskSetter> callBack = (setter) =>
             {
                 this.Take(id);

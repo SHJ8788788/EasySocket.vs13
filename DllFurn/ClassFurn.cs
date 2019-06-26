@@ -31,7 +31,7 @@ namespace DllFurn
             //}
             var value = opc.OpLinkTagValue("Ramp101");
             opc.FurnChanged("加热炉炉内发生动作");
-            LogHelper.Debug("加热炉-入炉");
+            LogHelper.Info("加热炉-入炉");
 
             using (var db = SugarDao.Instance)
             {
@@ -61,7 +61,7 @@ namespace DllFurn
             //}
             //加热炉出炉材料温度
             var chugang_temp = opc.OpLinkTagValue("Ramp101");
-            LogHelper.Debug("加热炉-出炉");
+            LogHelper.Info("加热炉-出炉");
 
             using (var db = SugarDao.Instance)
             {

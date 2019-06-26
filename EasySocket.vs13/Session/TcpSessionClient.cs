@@ -122,7 +122,7 @@ namespace EasySocket.vs13.Session
             }
         }
         /// <summary>
-        /// 停止客户端
+        /// 停止客户端,断开服务器连接
         /// </summary>
         public virtual bool Stop()
         {

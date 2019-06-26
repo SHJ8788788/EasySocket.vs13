@@ -62,30 +62,28 @@ namespace Log4Ex
         /// 调用函数前
         /// </summary>
         /// <param name="methodName">函数名</param>
-        /// <param name="UniqueIdentifier">唯一标识</param>
-        public static void MethodBegin(string methodName,string UniqueIdentifier="")
+        public static void MethodBegin(string methodName)
         {
             var log = GetCustomLoggerByFileName(methodName);
             if (log == null)
             {
                 return;
             }
-            string message = "Method:[" + methodName + "] Guid:[" + UniqueIdentifier + "]  Msg: " + "*******Begin*******************";
+            string message = "Method:[" + methodName + "()]  Msg: " + "**********************************Begin**********************************";
             log.Info(message);
         }
         /// <summary>
         /// 调用函数后
         /// </summary>
         /// <param name="methodName">函数名</param>
-        /// <param name="UniqueIdentifier">唯一标识</param>
-        public static void MethodEnd(string methodName,string UniqueIdentifier = "")
+        public static void MethodEnd(string methodName)
         {
             var log = GetCustomLoggerByFileName(methodName);
             if (log == null)
             {
                 return;
             }
-            string message = "Method:[" + methodName + "] Guid:[" + UniqueIdentifier + "]  Msg: " + "*******End*********************";
+            string message = "Method:[" + methodName + "()]  Msg: " + "**********************************End**********************************";
             log.Info(message);
         }
         /// <summary>
@@ -93,16 +91,15 @@ namespace Log4Ex
         /// </summary>
         /// <param name="methodName">函数名</param>
         /// <param name="errorDesc">异常描述</param>
-        /// <param name="UniqueIdentifier">唯一标识</param>
-        public static void MethodException(string methodName,string errorDesc, string UniqueIdentifier = "")
+        public static void MethodException(string methodName,string errorDesc)
         {
             var log = GetCustomLoggerByFileName(methodName);
             if (log == null)
             {
                 return;
             }
-            string messageDesc = "Method:[" + methodName + "] Guid:["+ UniqueIdentifier + "]  Msg: " + errorDesc;            
-            string message = "Method:[" + methodName + "]  Msg: " + "*******End with Exception*******";
+            string messageDesc = "Method:[" + methodName + "()]  Msg: " + errorDesc;            
+            string message = "Method:[" + methodName + "()]  Msg: " + "**********************************End with Exception**********************************";
             log.Error(messageDesc);
             log.Error(message);
         }
@@ -123,7 +120,7 @@ namespace Log4Ex
             {
                 return;
             }
-            string messageDesc = "Method:[" + methodName + "]  Msg: " + errorDesc;
+            string messageDesc = "Method:[" + methodName + "()]  Msg: " + errorDesc;
             log.Error(messageDesc);
         }
         #endregion

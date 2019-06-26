@@ -19,7 +19,7 @@ namespace Models
         [ProtoMember(2)]
         public string TagValue { get; set; }
         [ProtoMember(3)]
-        public string TagTypeName { get; set; }
+        public Type TagType { get; set; }
 
         /// <summary>
         /// 默认类型转换
@@ -27,7 +27,7 @@ namespace Models
         /// <returns></returns>
         public dynamic ValueCast()
         {
-            return Converter.Cast(TagValue, Type.GetType(TagTypeName));
+            return Converter.Cast(TagValue, TagType);
         }
         /// <summary>
         /// 强制类型转换

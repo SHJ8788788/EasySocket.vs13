@@ -68,6 +68,7 @@ namespace EasyClient
             EasyTcpClient.Instance.CloseHandle = CloseHandle
                                       = LoginFormShowAfterReconnect;
             if (EasyTcpClient.Instance.Connect("127.0.0.1", 5555))
+            //if (EasyTcpClient.Instance.Connect("172.15.1.28", 50000))
             {
 
             }

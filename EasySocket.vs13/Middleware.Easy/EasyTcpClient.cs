@@ -145,7 +145,8 @@ namespace EasySocket.vs13.Telegram.Easy
             //生成EasyPacket,生成失败则直接返回
             if (EasyPacket.GenerateEasyPackets(context, out easyPackets) == false)
             {
-                return easyPackets;
+             //var df  = Encoding.ASCII.GetString(context.StreamReader.ReadArray(), 0, context.StreamReader.Length);
+             return easyPackets;
             }
             else if (easyPackets == null)
             {
@@ -316,7 +317,7 @@ namespace EasySocket.vs13.Telegram.Easy
                 && item.IsInterface == false
                     //判断EasyTcpClient是否是item的父类或接口
                );
-
+            apiActionTable.Clear();
             foreach (var type in EasyApiServices)
             {
                 var actions = Internal.Common.GetServiceApiActions(type);

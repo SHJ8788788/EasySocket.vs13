@@ -28,7 +28,7 @@ namespace EasySocket.vs13.Telegram.Easy
             UniqueIdentifier = filterContext.Action.UniqueIdentifier;
             var log = string.Format("Time:{0} Client:{1} Action:{2} Message:{3}", DateTime.Now.ToString("mm:ss"), filterContext.Packet, filterContext.Action, this.message);
             LogHelper.MethodBegin(Action.ToString());
-            Console.WriteLine(log);
+            //Console.WriteLine(log);
         }
 
         protected override void OnExecuted(ActionContext filterContext)
@@ -43,7 +43,7 @@ namespace EasySocket.vs13.Telegram.Easy
             //var log = string.Format("Time:{0} Client:{1} Action:{2} Message:{3}", DateTime.Now.ToString("mm:ss"), filterContext.Packet, filterContext.Exception.Message, this.message);
             var log = filterContext.Exception.Message;
             LogHelper.MethodException(Action.ToString(),log);
-            Console.WriteLine(log);
+            //Console.WriteLine(log);
         }
 
     }

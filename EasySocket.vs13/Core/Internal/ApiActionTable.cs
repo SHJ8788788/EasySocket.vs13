@@ -61,6 +61,14 @@ namespace EasySocket.vs13.Core.Internal
         }
 
         /// <summary>
+        /// 清空所有Api
+        /// </summary>
+        public void Clear()
+        {
+            this.dictionary.Clear();
+        }
+
+        /// <summary>
         /// 添加Api行为
         /// </summary>
         /// <param name="apiActions">Api行为</param>

@@ -257,7 +257,7 @@ namespace EasySocket.vs13
             this.plugManager.RaiseSended(this, context);
             //一般没什么用吧?可以添加Filter使用
             // 服务器正在发数据了
-            Console.WriteLine(string.Format(" > [{0},OnSend] -> ({1} bytes)", connId, bytes.Length));
+            //Console.WriteLine(string.Format(" > [{0},OnSend] -> ({1} bytes)", connId, bytes.Length));
         }
         /// <summary>
         /// 连接关闭通知
@@ -270,11 +270,13 @@ namespace EasySocket.vs13
         {
             if (errorCode == 0)
             { 
-                Console.WriteLine(string.Format(" > [{0},OnClose]", connId));                
+                //Console.WriteLine(string.Format(" > [{0},OnClose]", connId));                
             }                
             else
             {
-                Console.WriteLine(string.Format(" > [{0},OnError] -> OP:{1},CODE:{2}", connId, enOperation, errorCode));
+                string message = string.Format(" > [{0},OnError] -> OP:{1},CODE:{2}", connId, enOperation, errorCode);
+                Log4Ex.LogHelper.MiddlewareException("TcpListenerBase", message);
+                //Console.WriteLine(message);
             }
             var session = sessionManager.SelectSession(connId);
             session.IsConnected = false;
@@ -293,7 +295,9 @@ namespace EasySocket.vs13
         protected void OnShutdown()
         {
             // 服务关闭了
-            Console.WriteLine(" > [OnShutdown]");
+            string message = " > [OnShutdown]";
+            Log4Ex.LogHelper.MiddlewareException("TcpListenerBase", message);
+            //Console.WriteLine(" > [OnShutdown]");
         }
         #endregion
         #region IDisposable
