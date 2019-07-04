@@ -54,7 +54,7 @@ namespace DllOpcEvent
                     .CurrentContext
                     .EasySessions
                     .Where(item =>
-                    item != this.CurrentContext.Session &&
+                    //item != this.CurrentContext.Session &&
                     item.Tag.ContainsKey("category")&&
                     item.Tag.Get("category").Value.ToString() == "client");
             }
@@ -67,25 +67,30 @@ namespace DllOpcEvent
             LogHelper.Info($"TagName:{tag.TagName} TagValue:{tag.ValueCast<string>()}");   
             //加热炉入炉
             if (tag.TagName== "JRL_RL"&& tag.ValueCast()==true)
-            {              
-               this.FurnIn();               
+            {
+                this.FurnIn();
             }
             //加热炉出炉
             else if (tag.TagName == "JRL_CL" && tag.ValueCast() == true)
             {
-               this.FurnOut();
+                this.FurnOut();
             }
-            //粗轧咬钢信号-轧制开始
+            //轧制开始
+            //粗轧开始1号机架咬钢信号
             else if (tag.TagName == "H1YAOGANG" && tag.ValueCast() == true)
             {
+                /*********************停机时间计算***********************/
+                this.DownTimeStop();
+                
                 this.Mill1ActionYaoGang();
             }
             //1号轧机抛钢信号信号
             else if (tag.TagName == "H1YAOGANG" && tag.ValueCast() == false)
             {
-                this.Mill1ActionPaoGang();
+                /*********************停机时间计算***********************/
+                this.DownTimeStart();              
             }
-            //粗轧抛钢信号
+            //粗轧结束6号机架抛钢信号
             else if (tag.TagName == "H6YAOGANG" && tag.ValueCast() == false)
             {
                 this.Mill6ActionPaoGang();
@@ -123,7 +128,7 @@ namespace DllOpcEvent
             //吐丝机咬钢信号
             else if (tag.TagName == "TSYAOGANG" && tag.ValueCast() == true)
             {
-                
+                this.TSActionYaoGang();
             }
             //吐丝机抛钢信号--轧制结束
             else if (tag.TagName == "TSYAOGANG" && tag.ValueCast() == false)

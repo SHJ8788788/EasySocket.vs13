@@ -73,6 +73,10 @@
       <Project>{ac838723-d1eb-4767-bcb5-9a73aea0cecc}</Project>
       <Name>Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SoEasyPlatform-master\Asp.Net\DBLZGX2L2.Enties\DBLZGX2L2.Enties.csproj">
+      <Project>{e840d0a7-318a-4328-b954-6029442b1757}</Project>
+      <Name>DBLZGX2L2.Enties</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

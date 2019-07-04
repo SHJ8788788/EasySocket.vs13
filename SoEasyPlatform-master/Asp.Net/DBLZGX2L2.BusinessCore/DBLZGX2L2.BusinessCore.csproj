@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="11.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{91EB925A-90FC-417C-824F-0F19FF3F2E7D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DBLZGX2L2.BusinessCore</RootNamespace>
+    <AssemblyName>DBLZGX2L2.BusinessCore</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.7.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.7.9\lib\net40\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SqlSugar, Version=4.9.7.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\sqlSugar.4.9.7.5\lib\SqlSugar.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseCore\X2H50AManager.cs" />
+    <Compile Include="BaseCore\X2H509Manager.cs" />
+    <Compile Include="BaseCore\X2H506Manager.cs" />
+    <Compile Include="BaseCore\X2H505Manager.cs" />
+    <Compile Include="BaseCore\X2H504_WEIGHTManager.cs" />
+    <Compile Include="BaseCore\X2H504_BAKManager.cs" />
+    <Compile Include="BaseCore\X2H504Manager.cs" />
+    <Compile Include="BaseCore\X2H503_BAK1Manager.cs" />
+    <Compile Include="BaseCore\X2H503Manager.cs" />
+    <Compile Include="BaseCore\X2H502_BAKManager.cs" />
+    <Compile Include="BaseCore\X2H502Manager.cs" />
+    <Compile Include="BaseCore\X2H501_BAKManager.cs" />
+    <Compile Include="BaseCore\X2H501Manager.cs" />
+    <Compile Include="BaseCore\USERINFOManager.cs" />
+    <Compile Include="BaseCore\TOAD_PLAN_TABLEManager.cs" />
+    <Compile Include="BaseCore\TABLE_FOR_TESTManager.cs" />
+    <Compile Include="BaseCore\SERVERLOGManager.cs" />
+    <Compile Include="BaseCore\ROLLMNGManager.cs" />
+    <Compile Include="BaseCore\P_DATA_RFManager.cs" />
+    <Compile Include="BaseCore\P_DATA_MILLManager.cs" />
+    <Compile Include="BaseCore\P_DATAManager.cs" />
+    <Compile Include="BaseCore\PRINTTMPManager.cs" />
+    <Compile Include="BaseCore\PRIDATA_WTManager.cs" />
+    <Compile Include="BaseCore\PRIDATA_HISTManager.cs" />
+    <Compile Include="BaseCore\PRIDATA_BAKManager.cs" />
+    <Compile Include="BaseCore\PRIDATAManager.cs" />
+    <Compile Include="BaseCore\MAINPDIManager.cs" />
+    <Compile Include="BaseCore\LABELCOUNTERManager.cs" />
+    <Compile Include="BaseCore\ITF_PARA_VALUEManager.cs" />
+    <Compile Include="BaseCore\INTERFACE_TEL_RECEIVEManager.cs" />
+    <Compile Include="BaseCore\INTERFACE_TEL_CONFIG_INFOManager.cs" />
+    <Compile Include="BaseCore\INTERFACE_TAB_COL_CONFIG_BAKManager.cs" />
+    <Compile Include="BaseCore\INTERFACE_TAB_COL_CONFIGManager.cs" />
+    <Compile Include="BaseCore\H5X20AManager.cs" />
+    <Compile Include="BaseCore\H5X202Manager.cs" />
+    <Compile Include="BaseCore\H5X201_BAK1Manager.cs" />
+    <Compile Include="BaseCore\H5X201Manager.cs" />
+    <Compile Include="BaseCore\ERRRECORDManager.cs" />
+    <Compile Include="BaseCore\DOWNTIMEManager.cs" />
+    <Compile Include="BaseCore\CURSHIFTManager.cs" />
+    <Compile Include="BaseCore\CURSETManager.cs" />
+    <Compile Include="BaseCore\CURCTRA_1Manager.cs" />
+    <Compile Include="BaseCore\CURCTRAManager.cs" />
+    <Compile Include="BaseCore\CODEDTManager.cs" />
+    <Compile Include="BaseCore\C3_BWX_WMT03_RUN02Manager.cs" />
+    <Compile Include="BaseCore\C3_BWX_WMT03_RUN01Manager.cs" />
+    <Compile Include="BaseCore\BLT_WEIGHT_CHKManager.cs" />
+    <Compile Include="BaseCore\BLT_PROC_HISTManager.cs" />
+    <Compile Include="BaseCore\BLT_PROC_DATAManager.cs" />
+    <Compile Include="BaseCore\BLT_PROCManager.cs" />
+    <Compile Include="BaseCore\BLT_DISPOSE_BAKManager.cs" />
+    <Compile Include="BaseCore\BLT_DISPOSEManager.cs" />
+    <Compile Include="DbCore\DbContext.cs" />
+    <Compile Include="Class1.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DllBase\DllBase.csproj">
+      <Project>{e5365f24-b020-4557-ab1b-c39f55f64afa}</Project>
+      <Name>DllBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DBLZGX2L2.Enties\DBLZGX2L2.Enties.csproj">
+      <Name>DBLZGX2L2.Enties</Name>
+      <Project>{e840d0a7-318a-4328-b954-6029442b1757}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

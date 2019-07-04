@@ -27,14 +27,14 @@ namespace EasySocket.vs13.Telegram.Easy
             Action = filterContext.Action.ToString();
             UniqueIdentifier = filterContext.Action.UniqueIdentifier;
             var log = string.Format("Time:{0} Client:{1} Action:{2} Message:{3}", DateTime.Now.ToString("mm:ss"), filterContext.Packet, filterContext.Action, this.message);
-            LogHelper.MethodBegin(Action.ToString());
+            //LogHelper.MethodBegin(Action.ToString());
             //Console.WriteLine(log);
         }
 
         protected override void OnExecuted(ActionContext filterContext)
         {
             //var log = string.Format("Time:{0} Client:{1} Action:{2} Message:{3}", DateTime.Now.ToString("mm:ss"), filterContext.Packet, filterContext.Action, this.message);
-            LogHelper.MethodEnd(Action.ToString());
+            //LogHelper.MethodEnd(Action.ToString());
             //Console.WriteLine(log);
         }
 

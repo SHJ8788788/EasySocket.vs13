@@ -53,6 +53,7 @@
     <Compile Include="Convert\Converts\PrimitiveContert.cs" />
     <Compile Include="Convert\MethodReflection.cs" />
     <Compile Include="Convert\PropertySetter.cs" />
+    <Compile Include="FurnInfo.cs" />
     <Compile Include="LoginResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetNameResult.cs" />

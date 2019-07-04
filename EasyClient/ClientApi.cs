@@ -49,9 +49,13 @@ namespace EasyClient
         /// </summary>
         /// <param name="message"></param>
         [Api]
-        public void FurnChanged(string message)
+        public void FurnChanged(List<FurnInfo> furnInfos)
         {
-            Instance.MsgHandle(message);
+            foreach (var furnInfo in furnInfos)
+            {
+                Instance.MsgHandle(furnInfo.BLT_NO);
+            }
+           
         }
 
         /// <summary>

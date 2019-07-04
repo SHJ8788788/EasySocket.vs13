@@ -262,10 +262,10 @@ namespace Log4Ex
             for (int i = 1; i < sfs.Length; ++i)
             {
                 //非用户代码,系统方法及后面的都是系统调用，不获取用户代码调用结束
-                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == sfs[i].GetILOffset()) break;
+                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == sfs[i].GetILOffset()) break;               
                 _methodName = sfs[i].GetMethod().Name;//方法名称
                                                       //sfs[i].GetFileLineNumber();//没有PDB文件的情况下将始终返回0
-                if (_filterdName.Contains(_methodName)) continue;
+                if (_filterdName.Contains(_methodName)) continue;               
                 _fullName = _methodName + "()->" + _fullName;
             }
             st = null;
@@ -308,7 +308,7 @@ namespace Log4Ex
             for (int i = 0; i < st.FrameCount; i++)
             {
                 StackFrame sf = st.GetFrame(i);
-                if (sf.GetMethod().Name == "lambda_method")//最终调用方式lambda排除
+                if (sf.GetMethod().Name == "lambda_method" || sf.GetMethod().Name == "TagEventChange")//最终调用方式lambda排除
                 {
                     break;
                 }

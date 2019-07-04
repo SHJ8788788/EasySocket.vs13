@@ -13,6 +13,6 @@ namespace DllBase
     public interface IClient
     {
         IEnumerable<EasySession> OtherSessions { get; }
-        IEnumerable<EasySession> ClientSessions { get; }
+        IEnumerable<EasySession> ClientSessions { get; }        
     }
 }

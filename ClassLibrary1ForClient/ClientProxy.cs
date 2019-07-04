@@ -14,7 +14,7 @@ namespace MM00
     /// <summary>
     /// 代理方法类，需要使用的远程调用方法在此处描述
     /// </summary>
-    public class ClientProxy
+    public partial class ClientProxy
     {
         /// <summary>
         /// 获取唯一实例
@@ -84,5 +84,7 @@ namespace MM00
         {
             return Instance.InvokeApi<List<TagSimple>>("GetTags", list);
         }
+
+        
     }
 }

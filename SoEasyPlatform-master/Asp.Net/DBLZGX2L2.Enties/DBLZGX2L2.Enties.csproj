@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="11.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E840D0A7-318A-4328-B954-6029442B1757}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DBLZGX2L2.Enties</RootNamespace>
+    <AssemblyName>DBLZGX2L2.Enties</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.7.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.7.9\lib\net40\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SqlSugar, Version=4.9.7.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\sqlSugar.4.9.7.5\lib\SqlSugar.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DbModels\X2H50A.cs" />
+    <Compile Include="DbModels\X2H509.cs" />
+    <Compile Include="DbModels\X2H506.cs" />
+    <Compile Include="DbModels\X2H505.cs" />
+    <Compile Include="DbModels\X2H504_WEIGHT.cs" />
+    <Compile Include="DbModels\X2H504_BAK.cs" />
+    <Compile Include="DbModels\X2H504.cs" />
+    <Compile Include="DbModels\X2H503_BAK1.cs" />
+    <Compile Include="DbModels\X2H503.cs" />
+    <Compile Include="DbModels\X2H502_BAK.cs" />
+    <Compile Include="DbModels\X2H502.cs" />
+    <Compile Include="DbModels\X2H501_BAK.cs" />
+    <Compile Include="DbModels\X2H501.cs" />
+    <Compile Include="DbModels\USERINFO.cs" />
+    <Compile Include="DbModels\TOTAL_PDI.cs" />
+    <Compile Include="DbModels\TOAD_PLAN_TABLE.cs" />
+    <Compile Include="DbModels\TABLE_FOR_TEST.cs" />
+    <Compile Include="DbModels\SERVERLOG.cs" />
+    <Compile Include="DbModels\SECSEQ.cs" />
+    <Compile Include="DbModels\ROLLMNG.cs" />
+    <Compile Include="DbModels\P_DATA_RF.cs" />
+    <Compile Include="DbModels\P_DATA_MILL.cs" />
+    <Compile Include="DbModels\P_DATA.cs" />
+    <Compile Include="DbModels\PRINTTMP.cs" />
+    <Compile Include="DbModels\PRIDATA_WT.cs" />
+    <Compile Include="DbModels\PRIDATA_HIST.cs" />
+    <Compile Include="DbModels\PRIDATA_BAK.cs" />
+    <Compile Include="DbModels\PRIDATA.cs" />
+    <Compile Include="DbModels\MAINSEQ.cs" />
+    <Compile Include="DbModels\MAINPDI.cs" />
+    <Compile Include="DbModels\LABELCOUNTER.cs" />
+    <Compile Include="DbModels\ITF_PARA_VALUE.cs" />
+    <Compile Include="DbModels\INTERFACE_TEL_RECEIVE.cs" />
+    <Compile Include="DbModels\INTERFACE_TEL_CONFIG_INFO.cs" />
+    <Compile Include="DbModels\INTERFACE_TAB_COL_CONFIG_BAK.cs" />
+    <Compile Include="DbModels\INTERFACE_TAB_COL_CONFIG.cs" />
+    <Compile Include="DbModels\HOOK_INFO.cs" />
+    <Compile Include="DbModels\H5X20A.cs" />
+    <Compile Include="DbModels\H5X202.cs" />
+    <Compile Include="DbModels\H5X201_BAK1.cs" />
+    <Compile Include="DbModels\H5X201.cs" />
+    <Compile Include="DbModels\ERRRECORD.cs" />
+    <Compile Include="DbModels\DOWNTIME.cs" />
+    <Compile Include="DbModels\CURSHIFT.cs" />
+    <Compile Include="DbModels\CURSET.cs" />
+    <Compile Include="DbModels\CURCTRA_1.cs" />
+    <Compile Include="DbModels\CURCTRA.cs" />
+    <Compile Include="DbModels\CURBLT.cs" />
+    <Compile Include="DbModels\CODEDT.cs" />
+    <Compile Include="DbModels\C3_BWX_WMT03_RUN02.cs" />
+    <Compile Include="DbModels\C3_BWX_WMT03_RUN01.cs" />
+    <Compile Include="DbModels\BLT_WEIGHT_CHK.cs" />
+    <Compile Include="DbModels\BLT_PROC_HIST.cs" />
+    <Compile Include="DbModels\BLT_PROC_DATA.cs" />
+    <Compile Include="DbModels\BLT_PROC.cs" />
+    <Compile Include="DbModels\BLT_OUT_RF.cs" />
+    <Compile Include="DbModels\BLT_IN_SEQ.cs" />
+    <Compile Include="DbModels\BLT_INFO_OUTRF.cs" />
+    <Compile Include="DbModels\BLT_INFO_ENRF.cs" />
+    <Compile Include="DbModels\BLT_DISPOSE_BAK.cs" />
+    <Compile Include="DbModels\BLT_DISPOSE.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="TableEx.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

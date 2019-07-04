@@ -15,18 +15,18 @@ namespace DllOpc
     /// </summary>
     public static class OpcEx
     {
-        public static int OpLinkTagValue(this IOpc opc, string tagName)
+        public static String OpLinkTagValue(this IOpc opc, string tagName)
         {
             try
             {                
                 var temp = GetTagValue(opc, tagName).Result;
-                LogHelper.Info(string.Format("获取温度值成功，temp = {0}", temp));
-                return Convert.ToInt32(temp);
+                LogHelper.Info(string.Format($"获取Tag点成功，tagName = {tagName} ,value = {temp}"));
+                return temp;
             }
             catch (Exception ex)
             {
-                LogHelper.Error(ex.InnerException.Message);
-                throw ex.InnerException;
+                LogHelper.Error($"tagName = { tagName}  "+ex.Message);
+                return "0";               
             }
         }
         public static List<TagSimple> OpLinkTags(this IOpc opc, List<string> tagNames)
@@ -40,7 +40,7 @@ namespace DllOpc
             }
             catch (Exception ex)
             {
-                LogHelper.Error(ex.InnerException.Message);
+                LogHelper.Error(ex.Message);
                 throw ex.InnerException;
             }
         }
@@ -53,7 +53,7 @@ namespace DllOpc
             }
             catch (Exception ex)
             {
-                LogHelper.Error(ex.InnerException.Message);
+                LogHelper.Error(ex.Message);
                 throw ex.InnerException;
             }
         }

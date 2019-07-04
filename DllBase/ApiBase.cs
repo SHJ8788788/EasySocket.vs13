@@ -44,7 +44,7 @@ namespace DllBase
                     .CurrentContext
                     .EasySessions
                     .Where(item =>
-                    item != this.CurrentContext.Session&&
+                    //item != this.CurrentContext.Session &&
                     item.Tag.ContainsKey("category") &&
                     item.Tag.Get("category").Value.ToString() == "client");
             }

@@ -1,4 +1,5 @@
 ﻿using EasySocket.vs13.Telegram.Easy;
+using Log4Ex;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,18 @@ namespace DllBase
         {
             get
             {
-                return new SqlSugarClient(ConnectionConfig);
+                var db = new SqlSugarClient(ConnectionConfig);
+                //用来打印Sql方便你调式    
+                db.Aop.OnLogExecuting = (sql, pars) =>
+                {
+                    string str = "\r\n"+ sql + "\r\n" +
+                    db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
+                    LogHelper.Info(str.Replace("\n", "\n                                                                       "));
+                    //Console.WriteLine(sql + "\r\n" +
+                    //db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
+                    //Console.WriteLine();
+                };
+                return db;
             }
         }
 

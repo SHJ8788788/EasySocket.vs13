@@ -22,6 +22,7 @@ namespace MM00
         public FormMM00A1()
         {
             InitializeComponent();
+            Test3Init();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -256,6 +257,48 @@ namespace MM00
             txtTagValue1.Text = result[0].TagValue;
             txtTagValue2.Text = result[1].TagValue;
             txtTagValue3.Text = result[2].TagValue;
+        }
+
+        private void Test3Init()
+        {
+            textBox1.Text = "JRL_RL";
+            textBox2.Text = "JRL_CL";
+            textBox3.Text = "H1YAOGANG";
+            textBox4.Text = "H6YAOGANG";
+            textBox5.Text = "H7YAOGANG";
+            textBox6.Text = "H12YAOGANG";
+            textBox7.Text = "H13YAOGANG";
+            textBox8.Text = "H18YAOGANG";
+            textBox9.Text = "JZYAOGANG";
+            textBox10.Text = "TSYAOGANG";
+        }
+
+        private void buttontrue_Click(object sender, EventArgs e)
+        {
+            TagSimple tagSimple;
+            Button btn = (Button)sender;
+            string tbName = "textBox"+ btn.Text.Substring(0, (btn.Text.Length - 4));
+            Control control = Controls.Find(tbName, true)[0];
+            if (control.GetType()==typeof(TextBox))
+            {
+                TextBox tb = (TextBox)control;
+                tagSimple = new TagSimple { TagName = tb.Text, TagValue = "true", TagType = typeof(Boolean) };
+                ClientProxy.TagEventChange(tagSimple);
+            }            
+        }
+
+        private void buttonfalse_Click(object sender, EventArgs e)
+        {
+            TagSimple tagSimple;
+            Button btn = (Button)sender;
+            string tbName = "textBox" + btn.Text.Substring(0, (btn.Text.Length - 5));
+            Control control = Controls.Find(tbName, true)[0];
+            if (control.GetType() == typeof(TextBox))
+            {
+                TextBox tb = (TextBox)control;
+                tagSimple = new TagSimple { TagName = tb.Text, TagValue = "false", TagType = typeof(Boolean) };
+                ClientProxy.TagEventChange(tagSimple);
+            }
         }
     }
 }

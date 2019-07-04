@@ -1,4 +1,5 @@
 ﻿using DllBase;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,11 @@ namespace DllClient
         /// 炉内支数发生变化
         /// </summary>
         /// <returns></returns>
-        public static void FurnChanged(this IClient client, string message)
+        public static void FurnChanged(this IClient client, List<FurnInfo> furnInfos)
         {          
             foreach (var session in client.ClientSessions)
             {
-                session.InvokeApi("FurnChanged",message);
+                session.InvokeApi("FurnChanged", furnInfos);
             }
         }
 

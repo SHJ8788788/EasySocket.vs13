@@ -46,10 +46,10 @@ namespace DllClient
                     .CurrentContext
                     .EasySessions
                     .Where(item =>
-                    item != this.CurrentContext.Session &&
+                    //item != this.CurrentContext.Session &&
                     item.Tag.Get("category").Value.ToString() == "client");
             }
-        }
+        }  
 
         public void test1()
         {
