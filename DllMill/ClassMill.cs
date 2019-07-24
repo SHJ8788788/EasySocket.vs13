@@ -242,7 +242,7 @@ namespace DllMill
                     p.BLT_FLG == "12" 
                     && p.MIDFINROLL_END_TIME == null
                     && p.MIDROLL_END_TIME == null
-                    && outMill12Time>p.MIDFINROLL_START_TIME)
+                    && outMill12Time>p.MIDROLL_START_TIME)
                     .OrderBy(it => it.WR_RL_SAT_DT, OrderByType.Asc).First();
                     if (matNoReadyMill == null)
                     {
