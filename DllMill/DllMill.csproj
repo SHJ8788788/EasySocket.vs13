@@ -75,6 +75,10 @@
       <Project>{e40a3025-c1be-4139-adb7-5975b4ec25a3}</Project>
       <Name>Log4Ex</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{AC838723-D1EB-4767-BCB5-9A73AEA0CECC}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SoEasyPlatform-master\Asp.Net\DBLZGX2L2.Enties\DBLZGX2L2.Enties.csproj">
       <Project>{e840d0a7-318a-4328-b954-6029442b1757}</Project>
       <Name>DBLZGX2L2.Enties</Name>

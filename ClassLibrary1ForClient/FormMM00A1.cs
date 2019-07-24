@@ -27,6 +27,7 @@ namespace MM00
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //this.WindowState = FormWindowState.Maximized;
             //Client.Instance.TimeOut = TimeSpan.FromSeconds(30);
             ////连接时采用同步方式，等待服务端返回结果，会引起阻塞，（异步方式无法判断连接状态，不采用）
             //Client.Instance.Async = false;
@@ -259,6 +260,12 @@ namespace MM00
             txtTagValue3.Text = result[2].TagValue;
         }
 
+        private async void btnGetTriggerValue_Click(object sender, EventArgs e)
+        {
+            var result = await ClientProxy.GetTriggerTag(txtTriggerName1.Text);
+            txtTriggerValue1.Text = result;
+        }
+
         private void Test3Init()
         {
             textBox1.Text = "JRL_RL";
@@ -299,6 +306,11 @@ namespace MM00
                 tagSimple = new TagSimple { TagName = tb.Text, TagValue = "false", TagType = typeof(Boolean) };
                 ClientProxy.TagEventChange(tagSimple);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Maximized;
         }
     }
 }

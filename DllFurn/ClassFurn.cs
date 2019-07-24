@@ -89,11 +89,12 @@ namespace DllFurn
 
                     LogHelper.Info($"更新计划状态,材料号:{matNoReadyIn.BILLET_NO}");
                     matNoReadyIn.FLAG = 1;
-                    db.Updateable<PRIDATA>(matNoReadyIn).ExecuteCommand();
+                    db.Updateable<PRIDATA>(matNoReadyIn).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
 
                     /*********************过程数据采集***********************/
                     //入炉温度
                     var JRL_RL_TEMP = opc.OpLinkTagValue("JRL_RL_TEMP");
+
                     //炉膛炉压
                     var LUTANG_P = opc.OpLinkTagValue("LUTANG_P");
                     //煤气总管压力
@@ -145,25 +146,28 @@ namespace DllFurn
                         HEAT_TEMP_8 = X_JUNRE_Y_T.ToInt32(),
                     };
                     LogHelper.Info($"新增材料过程数据,内容:{insertData2.ToLog()}");
+
+                    //先删除再新增
+                    db.Deleteable<BLT_PROC_DATA>().Where(it => it.BLT_NO == matNoReadyIn.BILLET_NO).ExecuteCommand();
                     db.Insertable<BLT_PROC_DATA>(insertData2).ExecuteCommand();
 
                     var insertData3 = new X2H501()
                     {
                         //MSG_ID 在实体中定义特性OracleSequenceName = "X2H501_SEQ"
-                        MSG_TIME_STAMP = enFurnTime.ToString("yyyyMMddhhmmss"),
+                        MSG_TIME_STAMP = enFurnTime.ToString("yyyyMMddHHmmss"),
                         MSG_FLAG = "0",
                         BILLET_NO = matNoReadyIn.BILLET_NO,
                         FAC_OP_CD = "WB",
                         CREATED_PROGRAM_ID = "L2sgis",
-                        CREATION_D = enFurnTime.ToString("yyyyMMddhhmmss"),
-                        RF_CH_DT = enFurnTime.ToString("yyyyMMddhhmmss"),
+                        CREATION_D = enFurnTime.ToString("yyyyMMddHHmmss"),
+                        RF_CH_DT = enFurnTime.ToString("yyyyMMddHHmmss"),
                         RF_CH_OP_SFT = curShift.GetShiftNo() + curShift.GetGroupNo(),
                         EMPLOYEE_N1 = "AAAA",
                         WR_HT_FCE_CH_BT_SEC = Convert.ToInt16(matNoReadyIn.BLT_FAC.Substring(0, 3)),
                         RF_CH_MAT_LEN = matNoReadyIn.BLT_LEN,
                         RF_CH_MAT_RL_WGT = matNoReadyIn.BLT_WGT,
                         RF_CH_MAT_CAL_WGT = matNoReadyIn.BLT_WGT,
-                        RF_CH_MAT_TM = Convert.ToInt16(JRL_RL_TEMP),
+                        RF_CH_MAT_TM = JRL_RL_TEMP.ToInt16(),
                         RF_MAT_CH_LEAD_TIME = 0,
                         RF_CHARGE_STATUS = "1",
                         RST_HCR_FLAG = "C"
@@ -247,7 +251,7 @@ namespace DllFurn
                     matNoReadyOut.RF_DEV_OP_SFT = shift;
                     matNoReadyOut.EMPLOYEE_OUTRF = "AAAA";
 
-                    LogHelper.Info($"新增材料主档信息,材料号:{matNoReadyOut.BLT_NO}");
+                    LogHelper.Info($"修改材料主档信息,材料号:{matNoReadyOut.BLT_NO}");
                     db.Updateable<BLT_PROC>(matNoReadyOut).ExecuteCommand();
 
                     /*********************过程数据采集***********************/
@@ -264,32 +268,32 @@ namespace DllFurn
                         OUT_FURNACE_TEMP = JRL_CL_TEMP.ToInt32()
                     };
                     LogHelper.Info($"新增材料过程数据,内容:{updateData2.ToLog()}");
-                    db.Updateable<BLT_PROC_DATA>(updateData2).ExecuteCommand();
+                    db.Updateable<BLT_PROC_DATA>(updateData2).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
 
                     var blt_proc_data = db.Queryable<BLT_PROC_DATA>().Where(it => it.BLT_NO == matNoReadyOut.BLT_NO).First();
-
+                     
                     var insertData3 = new X2H502()
                     {
                         //MSG_ID 在实体中定义特性OracleSequenceName = "X2H501_SEQ"
-                        MSG_TIME_STAMP = outFurnTime.ToString("yyyyMMddhhmmss"),
+                        MSG_TIME_STAMP = outFurnTime.ToString("yyyyMMddHHmmss"),
                         MSG_FLAG = "0",
                         BILLET_NO = matNoReadyOut.BLT_NO,
                         FAC_OP_CD = "WC",
                         CREATED_PROGRAM_ID = "L2sgis",
-                        CREATION_D = outFurnTime.ToString("yyyyMMddhhmmss"),
-                        RF_DEV_DT = outFurnTime.ToString("yyyyMMddhhmmss"),
+                        CREATION_D = outFurnTime.ToString("yyyyMMddHHmmss"),
+                        RF_DEV_DT = outFurnTime.ToString("yyyyMMddHHmmss"),
                         RF_DEV_OP_SFT = curShift.GetShiftNo() + curShift.GetGroupNo(),
                         EMPLOYEE_N1 = "AAAA",
                         RF_IN_FCE_TIME = Convert.ToInt16(outFurnTime.Subtract(Convert.ToDateTime(matNoReadyOut.RF_EN_DT)).TotalMinutes),
                         RF_PRHT_IN_FCE_TIME = 0,
                         RF_HT_Z_IN_FCE_TIME = 0,
                         RF_NOR_Z_IN_FCE_TIME = 0,
-                        RF_DEV_MAT_TM = Convert.ToInt16(blt_proc_data.OUT_FURNACE_TEMP),
-                        RF_HT_Z_MAT_TM = Convert.ToInt16(blt_proc_data.HEAT_TEMP_1),
-                        RF_NOR_Z_MAT_TM = Convert.ToInt16(blt_proc_data.HEAT_TEMP_3),
-                        RF_PRHT_TM = Convert.ToInt16(blt_proc_data.PRE_HEAT_TEMP),
-                        RF_HT_Z_TM = Convert.ToInt16(blt_proc_data.HEAT_TEMP_1),
-                        RF_NOR_Z_TM = Convert.ToInt16(blt_proc_data.HEAT_TEMP_3),
+                        RF_DEV_MAT_TM = Convert.ToInt16(blt_proc_data==null? 0:blt_proc_data.OUT_FURNACE_TEMP),
+                        RF_HT_Z_MAT_TM = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_1),
+                        RF_NOR_Z_MAT_TM = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_3),
+                        RF_PRHT_TM = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.PRE_HEAT_TEMP),
+                        RF_HT_Z_TM = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_1),
+                        RF_NOR_Z_TM = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_3),
                         RF_PRHT_VEFFI = 0,
                         RF_HT_Z_VEFFI = 0,
                         RF_NOR_Z_VEFFI = 0,
@@ -298,10 +302,11 @@ namespace DllFurn
                         RF_NOR_Z_O2_ASIS_V = 0,
                         WR_DESCALER_OP_F1 = "Y",
                         WR_DESCALER_OP_PRS1 = 0,
-                        RF_EXIT_STATUS = "1"
+                        RF_EXIT_STATUS = "1",
+                        IN_FURNACE_TEMP = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.IN_FURNACE_TEMP)
                     };
                     LogHelper.Info($"新增电文X2H502数据,内容:{insertData3.ToLog()}");
-                    db.Insertable<X2H501>(insertData3).ExecuteCommand();
+                    db.Insertable<X2H502>(insertData3).ExecuteCommand();
 
                     //事务提交
                     db.Ado.CommitTran();
@@ -382,8 +387,5 @@ namespace DllFurn
 
             }
         }
-
-
-      
     }
 }

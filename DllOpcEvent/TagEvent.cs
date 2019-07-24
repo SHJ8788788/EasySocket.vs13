@@ -64,7 +64,15 @@ namespace DllOpcEvent
         [EasyLogFilter("事件发生变化")]
         public bool TagEventChange(TagSimple tag)
         {
-            LogHelper.Info($"TagName:{tag.TagName} TagValue:{tag.ValueCast<string>()}");   
+            LogHelper.Info($"TagName:{tag.TagName} TagValue:{tag.ValueCast<string>()}");
+
+            //轧线信号则更新跟踪表
+            if (tag.TagName.Contains("YAOGANG"))
+            {
+                this.MillAction();
+            }
+
+
             //加热炉入炉
             if (tag.TagName== "JRL_RL"&& tag.ValueCast()==true)
             {
@@ -83,6 +91,7 @@ namespace DllOpcEvent
                 this.DownTimeStop();
                 
                 this.Mill1ActionYaoGang();
+
             }
             //1号轧机抛钢信号信号
             else if (tag.TagName == "H1YAOGANG" && tag.ValueCast() == false)
@@ -139,12 +148,30 @@ namespace DllOpcEvent
             else if (tag.TagName== "HookA")
             {
                 this.CoilHookFinish(tag.ValueCast<int>());
+                this.HookAction(tag.ValueCast<int>());
             }
             else
             {
                 LogHelper.Info($"TagName:{tag.TagName},TagValue:{tag.TagValue.ToString()} 不存在可用的函数或信号未能处理");
             }
             return true;            
+        }
+
+        [Api]
+        [EasyLogFilter("取信号点值")]
+        public   string GetTriggerValue(string tagName)
+        {         
+            bool result  = this.GetTriggerValueFromOPC(tagName).ToBool();
+            string value = "";
+            if (result==true)
+            {
+                value = "1";
+            }
+            else
+            {
+                value = "0";
+            }
+            return value;
         }
     }
 }

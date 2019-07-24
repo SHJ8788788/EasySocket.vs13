@@ -45,21 +45,19 @@
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.mnuItmLogoff = new System.Windows.Forms.MenuItem();
             this.mnuItmExit = new System.Windows.Forms.MenuItem();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pnlInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pnlNum)).BeginInit();
             this.SuspendLayout();
             // 
             // staBarMain
             // 
-            this.staBarMain.Location = new System.Drawing.Point(0, 686);
+            this.staBarMain.Location = new System.Drawing.Point(0, 493);
             this.staBarMain.Name = "staBarMain";
             this.staBarMain.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
             this.pnlInfo,
             this.pnlNum});
             this.staBarMain.ShowPanels = true;
-            this.staBarMain.Size = new System.Drawing.Size(1008, 22);
+            this.staBarMain.Size = new System.Drawing.Size(916, 22);
             this.staBarMain.TabIndex = 1;
             // 
             // pnlInfo
@@ -71,16 +69,16 @@
             // 
             this.pnlNum.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Spring;
             this.pnlNum.Name = "pnlNum";
-            this.pnlNum.Width = 691;
+            this.pnlNum.Width = 599;
             // 
             // lbxMsg
             // 
             this.lbxMsg.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lbxMsg.FormattingEnabled = true;
             this.lbxMsg.ItemHeight = 12;
-            this.lbxMsg.Location = new System.Drawing.Point(0, 622);
+            this.lbxMsg.Location = new System.Drawing.Point(0, 429);
             this.lbxMsg.Name = "lbxMsg";
-            this.lbxMsg.Size = new System.Drawing.Size(1008, 64);
+            this.lbxMsg.Size = new System.Drawing.Size(916, 64);
             this.lbxMsg.TabIndex = 12;
             // 
             // mnuItmRun
@@ -163,32 +161,10 @@
             this.mnuItmExit.Text = "退出(&E)";
             this.mnuItmExit.Click += new System.EventHandler(this.mnuItmExit_Click);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(404, 181);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 14;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(404, 235);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 15;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(6, 14);
-            this.ClientSize = new System.Drawing.Size(1008, 708);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(916, 515);
             this.Controls.Add(this.lbxMsg);
             this.Controls.Add(this.staBarMain);
             this.IsMdiContainer = true;
@@ -217,11 +193,9 @@
         private System.Windows.Forms.MenuItem mnuItemWindow;
         private System.Windows.Forms.MenuItem mnuItmAbout;
         private System.Windows.Forms.MenuItem mnuItmHelp;
-        private System.Windows.Forms.MainMenu mnuMain;
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem mnuItmLogoff;
         private System.Windows.Forms.MenuItem mnuItmExit;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2; 
+        public System.Windows.Forms.MainMenu mnuMain;
     }
 }

@@ -1,4 +1,5 @@
-﻿using EasySocket.vs13.Telegram.Easy;
+﻿using EasySocket.vs13.Core;
+using EasySocket.vs13.Telegram.Easy;
 using Log4Ex;
 using Models;
 using System;
@@ -27,6 +28,35 @@ namespace DllOpc
             {
                 LogHelper.Error($"tagName = { tagName}  "+ex.Message);
                 return "0";               
+            }
+        }
+
+        public static String GetTriggerValueFromOPC(this IOpc opc, string tagName)
+        {
+            try
+            {
+                var temp = GetTriggerValue(opc, tagName).Result;
+                LogHelper.Info(string.Format($"获取Trigger点成功，tagName = {tagName} ,value = {temp}"));
+                return temp;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error($"tagName = { tagName}  " + ex.Message);
+                return "0";
+            }            
+        }
+        public static List<TagSimple> GetTriggersFromOPC(this IOpc opc, List<string> tagNames)
+        {
+            try
+            {
+                var temp = GetTriggers(opc, tagNames).Result;
+                LogHelper.Info(string.Format("返回需要的数据集合，tagsList = {0}", temp.ToString()));              
+                return temp;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex.Message);
+                return  null;
             }
         }
         public static List<TagSimple> OpLinkTags(this IOpc opc, List<string> tagNames)
@@ -61,6 +91,17 @@ namespace DllOpc
         {
             return opc.OpcSession.InvokeApi<string>("GetTagValue", tagName); 
         }
+
+        private static Task<string> GetTriggerValue(IOpc opc, string tagName)
+        {
+            return opc.OpcSession.InvokeApi<string>("GetTriggerValue", tagName);
+        }
+
+        private static Task<List<TagSimple>> GetTriggers(IOpc opc, List<string> tagNames)
+        {
+            return opc.OpcSession.InvokeApi<List<TagSimple>>("GetTriggers", tagNames);
+        }
+
         private static Task<List<TagSimple>> GetTags(IOpc opc, List<string> tagNames)
         {
             return opc.OpcSession.InvokeApi<List<TagSimple>>("GetTags", tagNames);

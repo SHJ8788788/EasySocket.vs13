@@ -10,6 +10,7 @@ using System.Reflection;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Configuration;
 
 namespace EasyServer
 {
@@ -27,7 +28,13 @@ namespace EasyServer
 
         static void Main(string[] args)
         {
-            TcpListenerHP listener = new TcpListenerHP("0.0.0.0", 5555);
+            //获取Configuration对象
+            Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            //根据Key读取<add>元素的Value
+            var Ip = config.AppSettings.Settings["EasyServerIp"].Value;
+            var Port =Convert.ToUInt16(config.AppSettings.Settings["EasyServerPort"].Value);
+
+            TcpListenerHP listener = new TcpListenerHP(Ip, Port);
             listener.Use<EasyMiddleware>();
             listener.UsePlug<SessionIdlePlug>()
                     .IdleTime(TimeSpan.FromMinutes(60));
@@ -35,7 +42,7 @@ namespace EasyServer
             listener.Start();
             //Console.CursorVisible = false;
             DisbleQuickEditMode();
-            Console.Title = "EasyServer";
+            Console.Title = "EasyServer-Gr";
             string input = Console.ReadLine();
             if (input == "Q")
             {

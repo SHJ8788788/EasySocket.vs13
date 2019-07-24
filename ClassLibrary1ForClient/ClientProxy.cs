@@ -85,6 +85,19 @@ namespace MM00
             return Instance.InvokeApi<List<TagSimple>>("GetTags", list);
         }
 
-        
+
+
+        /// <summary>
+        /// 信号点取值
+        /// </summary>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
+        public static Task<string> GetTriggerTag(string tagName)
+        {
+            return Instance.InvokeApi<string>("GetTriggerValue", tagName);
+        }
+
+
+
     }
 }

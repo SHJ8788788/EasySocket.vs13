@@ -49,7 +49,7 @@ namespace DllClient
                     //item != this.CurrentContext.Session &&
                     item.Tag.Get("category").Value.ToString() == "client");
             }
-        }  
+        }
 
         public void test1()
         {

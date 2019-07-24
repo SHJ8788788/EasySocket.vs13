@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbModels\BLT_STATUS.cs" />
     <Compile Include="DbModels\X2H50A.cs" />
     <Compile Include="DbModels\X2H509.cs" />
     <Compile Include="DbModels\X2H506.cs" />
