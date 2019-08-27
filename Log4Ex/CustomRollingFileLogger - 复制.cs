@@ -15,64 +15,64 @@ namespace Log4Ex
 {
     public abstract class CustomRollingFileLogger
     {
-        private static readonly ConcurrentDictionary<string, ILog> loggerContainer = new ConcurrentDictionary<string, ILog>();
+        private static readonly ConcurrentDictionary<string, ILog> loggerContainer = new ConcurrentDictionary<string, ILog>();  
         //自定义appender,为每个方法生成日志
         private static readonly Dictionary<string, MethodAppender> methodContainer = new Dictionary<string, MethodAppender>();
         //通用appender,新建logger时加载全部
         //private static readonly Dictionary<string, IAppender> appenderContainer = new Dictionary<string, IAppender>();  
-
-        private static object lockObj = new object();
-
+        
+        private static object lockObj = new object();  
+  
         //默认配置  
-        private const int MAX_SIZE_ROLL_BACKUPS = 10;
+        private const int MAX_SIZE_ROLL_BACKUPS = 20;
         //private const string LAYOUT_PATTERN = "%d [%-5t] %-5p %c  - %m%n";  
         //private const string LAYOUT_PATTERN = "%d [%-5t] %-5p - %m%n";  
         private const string LAYOUT_PATTERN = "%d %-5p - %m%n";
-        private const string DATE_PATTERN = "yyyyMMdd-HH\".txt\"";
-        private const string MAXIMUM_FILE_SIZE = "256MB";
-        private const string LEVEL = "debug";
-
+        private const string DATE_PATTERN = "yyyyMMdd-HH\".txt\"";  
+        private const string MAXIMUM_FILE_SIZE = "256MB";  
+        private const string LEVEL = "debug";  
+  
         //读取配置文件并缓存  
-        static CustomRollingFileLogger()
-        {
-            IAppender[] appenders = LogManager.GetRepository().GetAppenders();
-            for (int i = 0; i < appenders.Length; i++)
-            {
-                if (appenders[i] is MethodAppender)
-                {
-                    MethodAppender appender = (MethodAppender)appenders[i];
-                    if (appender.MaxSizeRollBackups == 0)
+        static CustomRollingFileLogger()  
+        {  
+            IAppender[] appenders = LogManager.GetRepository().GetAppenders();              
+            for (int i = 0; i < appenders.Length; i++)  
+            {  
+                if (appenders[i] is MethodAppender)  
+                {  
+                    MethodAppender appender = (MethodAppender)appenders[i];  
+                    if (appender.MaxSizeRollBackups == 0)  
+                    {  
+                        appender.MaxSizeRollBackups = MAX_SIZE_ROLL_BACKUPS;  
+                    }  
+                    if (appender.Layout != null && appender.Layout is log4net.Layout.PatternLayout)  
+                    {  
+                        appender.LayoutPattern = ((log4net.Layout.PatternLayout)appender.Layout).ConversionPattern;  
+                    }  
+                    if (string.IsNullOrEmpty(appender.LayoutPattern))  
+                    {  
+                        appender.LayoutPattern = LAYOUT_PATTERN;  
+                    }  
+                    if (string.IsNullOrEmpty(appender.DatePattern))  
+                    {  
+                        appender.DatePattern = DATE_PATTERN;  
+                    }  
+                    if (string.IsNullOrEmpty(appender.MaximumFileSize))  
+                    {  
+                        appender.MaximumFileSize = MAXIMUM_FILE_SIZE;  
+                    }  
+                    if (string.IsNullOrEmpty(appender.Level))  
+                    {  
+                        appender.Level = LEVEL;  
+                    }  
+                    lock(lockObj)  
                     {
-                        appender.MaxSizeRollBackups = MAX_SIZE_ROLL_BACKUPS;
-                    }
-                    if (appender.Layout != null && appender.Layout is log4net.Layout.PatternLayout)
-                    {
-                        appender.LayoutPattern = ((log4net.Layout.PatternLayout)appender.Layout).ConversionPattern;
-                    }
-                    if (string.IsNullOrEmpty(appender.LayoutPattern))
-                    {
-                        appender.LayoutPattern = LAYOUT_PATTERN;
-                    }
-                    if (string.IsNullOrEmpty(appender.DatePattern))
-                    {
-                        appender.DatePattern = DATE_PATTERN;
-                    }
-                    if (string.IsNullOrEmpty(appender.MaximumFileSize))
-                    {
-                        appender.MaximumFileSize = MAXIMUM_FILE_SIZE;
-                    }
-                    if (string.IsNullOrEmpty(appender.Level))
-                    {
-                        appender.Level = LEVEL;
-                    }
-                    lock (lockObj)
-                    {
-                        methodContainer[appenders[i].Name] = appender;
-                    }
-                }
-            }
-        }
-
+                        methodContainer[appenders[i].Name] = appender;  
+                    }  
+                }               
+            }  
+        }  
+  
         /// <summary>
         /// 
         /// </summary>
@@ -80,35 +80,35 @@ namespace Log4Ex
         /// <param name="category"></param>
         /// <param name="additivity">是否继承root</param>
         /// <returns></returns>
-        public static ILog GetCustomLoggerByFileName(string loggerName, string category = null, bool additivity = true)
-        {
-            return loggerContainer.GetOrAdd(loggerName, delegate (string name)
-            {
-                RollingFileAppender newAppender = null;
-                 MethodAppender appender = null;
-                if (methodContainer.ContainsKey("MethodAppender"))
+        public static ILog GetCustomLoggerByFileName(string loggerName, string category = null, bool additivity = true)  
+        {  
+            return loggerContainer.GetOrAdd(loggerName, delegate(string name)  
+            {  
+                RollingFileAppender newAppender = null;                
+                MethodAppender appender = null;
+                if (methodContainer.ContainsKey(loggerName))  
                 {
-                    appender = methodContainer["MethodAppender"];
-                    newAppender = GetNewFileApender(loggerName, string.IsNullOrEmpty(appender.File) ? GetFile(category, loggerName) : appender.File.Replace("*", loggerName), appender.MaxSizeRollBackups,
-                        appender.AppendToFile, true, appender.MaximumFileSize, RollingFileAppender.RollingMode.Composite, appender.DatePattern, appender.LayoutPattern);
-                }                
-                else
-                {
-                    newAppender = GetNewFileApender(loggerName, GetFile(category, loggerName), MAX_SIZE_ROLL_BACKUPS, true, true, MAXIMUM_FILE_SIZE, RollingFileAppender.RollingMode.Composite,
+                    appender = methodContainer[loggerName];  
+                    newAppender = GetNewFileApender(loggerName, string.IsNullOrEmpty(appender.File) ? GetFile(category, loggerName) : appender.File, appender.MaxSizeRollBackups,  
+                        appender.AppendToFile, true, appender.MaximumFileSize, RollingFileAppender.RollingMode.Composite, appender.DatePattern, appender.LayoutPattern);  
+                }  
+                else  
+                {  
+                    newAppender = GetNewFileApender(loggerName, GetFile(category, loggerName), MAX_SIZE_ROLL_BACKUPS, true, true, MAXIMUM_FILE_SIZE, RollingFileAppender.RollingMode.Composite,   
                         DATE_PATTERN, LAYOUT_PATTERN);
-                }
-                log4net.Repository.Hierarchy.Hierarchy repository = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
-                Logger logger = repository.LoggerFactory.CreateLogger(repository, loggerName);
-                logger.Hierarchy = repository;
+                }  
+                log4net.Repository.Hierarchy.Hierarchy repository = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();  
+                Logger logger = repository.LoggerFactory.CreateLogger(repository, loggerName);  
+                logger.Hierarchy = repository; 
                 logger.Parent = repository.Root;
-                logger.Level = GetLoggerLevel(appender == null ? LEVEL : appender.Level);
+                logger.Level = GetLoggerLevel(appender == null ? LEVEL : appender.Level);  
                 logger.Additivity = additivity;
-
-                logger.AddAppender(newAppender);
-
-                logger.Repository.Configured = true;
-                return new LogImpl(logger);
-            });
+                
+                logger.AddAppender(newAppender); 
+                
+                logger.Repository.Configured = true;  
+                return new LogImpl(logger);  
+            });  
         }
         /// <summary>
         /// 以方法名生成日志文件
@@ -119,14 +119,14 @@ namespace Log4Ex
         public static ILog GetCustomLogger(string category = null, bool additivity = true)
         {
             string loggerName = GetFileName();
-            return loggerContainer.GetOrAdd(loggerName, delegate (string name)
+            return loggerContainer.GetOrAdd(loggerName, delegate(string name)
             {
                 RollingFileAppender newAppender = null;
                 MethodAppender appender = null;
-                if (methodContainer.ContainsKey("MethodAppender"))
+                if (methodContainer.ContainsKey(loggerName))
                 {
-                    appender = methodContainer["MethodAppender"];
-                    newAppender = GetNewFileApender(loggerName, string.IsNullOrEmpty(appender.File) ? GetFile(category, loggerName) : appender.File.Replace("*", loggerName), appender.MaxSizeRollBackups,
+                    appender = methodContainer[loggerName];
+                    newAppender = GetNewFileApender(loggerName, string.IsNullOrEmpty(appender.File) ? GetFile(category, loggerName) : appender.File, appender.MaxSizeRollBackups,
                         appender.AppendToFile, true, appender.MaximumFileSize, RollingFileAppender.RollingMode.Composite, appender.DatePattern, appender.LayoutPattern);
                 }
                 else
@@ -144,68 +144,67 @@ namespace Log4Ex
                 logger.Repository.Configured = true;
                 return new LogImpl(logger);
             });
-        }
-
+        }  
+  
         //如果没有指定文件路径则在运行路径下建立 Log\{loggerName}.txt  
-        private static string GetFile(string category, string loggerName)
-        {
-            if (string.IsNullOrEmpty(category))
-            {
-                return string.Format(@"Log\{0}.txt", loggerName);
-            }
-            else
-            {
-                return string.Format(@"Log\{0}\{1}.txt", category, loggerName);
-            }
-        }
-
-        private static Level GetLoggerLevel(string level)
-        {
-            if (!string.IsNullOrEmpty(level))
-            {
-                switch (level.ToLower().Trim())
-                {
-                    case "debug":
-                        return Level.Debug;
-
-                    case "info":
-                        return Level.Info;
-
-                    case "warn":
-                        return Level.Warn;
-
-                    case "error":
-                        return Level.Error;
-
-                    case "fatal":
-                        return Level.Fatal;
-                }
-            }
-            return Level.Debug;
-        }
-
-        private static RollingFileAppender GetNewFileApender(string appenderName, string file, int maxSizeRollBackups, bool appendToFile = true, bool staticLogFileName = false, string maximumFileSize = "5MB", RollingFileAppender.RollingMode rollingMode = RollingFileAppender.RollingMode.Composite, string datePattern = "yyyyMMdd\".txt\"", string layoutPattern = "%d [%t] %-5p %c  - %m%n")
-        {
-            RollingFileAppender appender = new RollingFileAppender
-            {
-                LockingModel = new FileAppender.MinimalLock(),
-                Name = appenderName,
-                File = file,
-                AppendToFile = appendToFile,
-                MaxSizeRollBackups = maxSizeRollBackups,
-                MaximumFileSize = maximumFileSize,
-                StaticLogFileName = staticLogFileName,
-                RollingStyle = rollingMode,
+        private static string GetFile(string category, string loggerName)  
+        {  
+            if (string.IsNullOrEmpty(category))  
+            {  
+                return string.Format(@"Log\{0}.txt", loggerName);  
+            }  
+            else  
+            {  
+                return string.Format(@"Log\{0}\{1}.txt", category, loggerName);  
+            }  
+        }  
+  
+        private static Level GetLoggerLevel(string level)  
+        {  
+            if (!string.IsNullOrEmpty(level))  
+            {  
+                switch (level.ToLower().Trim())  
+                {  
+                    case "debug":  
+                        return Level.Debug;  
+  
+                    case "info":  
+                        return Level.Info;  
+  
+                    case "warn":  
+                        return Level.Warn;  
+  
+                    case "error":  
+                        return Level.Error;  
+  
+                    case "fatal":  
+                        return Level.Fatal;  
+                }  
+            }  
+            return Level.Debug;  
+        }  
+  
+        private static RollingFileAppender GetNewFileApender(string appenderName, string file, int maxSizeRollBackups, bool appendToFile = true, bool staticLogFileName = false, string maximumFileSize = "5MB", RollingFileAppender.RollingMode rollingMode = RollingFileAppender.RollingMode.Composite, string datePattern = "yyyyMMdd\".txt\"", string layoutPattern = "%d [%t] %-5p %c  - %m%n")  
+        {  
+            RollingFileAppender appender = new RollingFileAppender  
+            {  
+                LockingModel = new FileAppender.MinimalLock(),  
+                Name = appenderName,  
+                File = file,  
+                AppendToFile = appendToFile,  
+                MaxSizeRollBackups = maxSizeRollBackups,  
+                MaximumFileSize = maximumFileSize,  
+                StaticLogFileName = staticLogFileName,  
+                RollingStyle = rollingMode,  
                 //CountDirection =-1,
-                DatePattern = datePattern,
-                Encoding = Encoding.UTF8
-            };
-            PatternLayout layout = new PatternLayout(layoutPattern);
-            appender.Layout = layout;
-            layout.ActivateOptions();
-            appender.ActivateOptions();
-            return appender;
-        }
+                DatePattern = datePattern  
+            };  
+            PatternLayout layout = new PatternLayout(layoutPattern);  
+            appender.Layout = layout;  
+            layout.ActivateOptions();  
+            appender.ActivateOptions();  
+            return appender;  
+        } 
         //将日记对象缓存起来
         //private static Dictionary<string, ILog> LogDic = new Dictionary<string, ILog>();
         //static object _islock = new object();
@@ -265,10 +264,10 @@ namespace Log4Ex
             for (int i = 1; i < sfs.Length; ++i)
             {
                 //非用户代码,系统方法及后面的都是系统调用，不获取用户代码调用结束
-                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == sfs[i].GetILOffset()) break;
+                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == sfs[i].GetILOffset()) break;               
                 _methodName = sfs[i].GetMethod().Name;//方法名称
                                                       //sfs[i].GetFileLineNumber();//没有PDB文件的情况下将始终返回0
-                if (_filterdName.Contains(_methodName)) continue;
+                if (_filterdName.Contains(_methodName)) continue;               
                 _fullName = _methodName + "()->" + _fullName;
             }
             st = null;

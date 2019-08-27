@@ -80,12 +80,15 @@ namespace DllBase
             if (newUser != null)
             {
                 //Console.WriteLine(newUser.name.ToString());
+                
                 msg = string.Format(" > [user:{0} Login Success] ->Time({1})", newUser.usercode + " " + newUser.name, DateTime.Now);
+                LogHelper.Info(msg);
                 return new LoginResult { State = true, Message = msg };
             }
             else
             {
                 msg = string.Format(" > [user:{0} Login Failture] ->Time({1})", user.Account + " " + user.Name, DateTime.Now);
+                LogHelper.Info(msg);
                 return new LoginResult { State = false, Message = msg };
             }            
         }

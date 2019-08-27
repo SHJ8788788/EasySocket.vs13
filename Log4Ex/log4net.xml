@@ -28,16 +28,16 @@
 </root>-->
     <!--一个appender可以由多个logger共用，当然一个logger可以指定多个appender。-->
     <appender name="MethodAppender" type="Log4Ex.MethodAppender">
-      <param name="file" value="log/logDefault.txt"/>
-      <param name="appendToFile" value="true"/>
-      <param name="maxSizeRollBackups" value="100"/>
-      <param name="maximumFileSize" value="2MB"/>
-      <param name="datePattern" value="yyyyMMdd'.txt'"/>
-      <param name="level" value="debug"/>
+      <file value="log/*.txt"/>
+      <appendToFile value="true"/>
+      <maxSizeRollBackups value="10"/>
+      <maximumFileSize value="10MB"/>
+      <datePattern value="yyyyMMdd'.txt'"/>
+      <level value="debug"/>
       <layout type="log4net.Layout.PatternLayout">
         <conversionPattern value="%d [%-5t] %-5p - %m%n"/>
       </layout>
-    </appender>   
+    </appender>
     <appender name="LogFileAppender" type="log4net.Appender.FileAppender">
       <param name="File" value="App.log"/>
       <param name="AppendToFile" value="true"/>
@@ -52,6 +52,7 @@
     <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
       <file value="log/logfile1.log"/>
       <appendToFile value="true"/>
+      <maxSizeRollBackups value="2"/>
       <rollingStyle value="Date"/>
       <datePattern value="yyyyMMdd"/>
       <encoding value="utf-8"/>

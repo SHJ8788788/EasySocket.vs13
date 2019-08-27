@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CustomRollingFileLogger.cs" />
     <Compile Include="LogExtend.cs.cs" />
+    <Compile Include="LogFileCleanupTask.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MethodAppender.cs" />

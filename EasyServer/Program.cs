@@ -11,6 +11,8 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Configuration;
+using Log4Ex;
+using System.Threading;
 
 namespace EasyServer
 {
@@ -42,6 +44,8 @@ namespace EasyServer
             listener.Start();
             //Console.CursorVisible = false;
             DisbleQuickEditMode();
+            CleanLogFiles();
+
             Console.Title = "EasyServer-Gr";
             string input = Console.ReadLine();
             if (input == "Q")
@@ -52,6 +56,7 @@ namespace EasyServer
             {
                 Console.Clear();
             }
+            Console.ReadLine();
         }
 
         /// <summary>
@@ -65,6 +70,21 @@ namespace EasyServer
             mode &= ~ENABLE_QUICK_EDIT_MODE;
             SetConsoleMode(hStdin, mode);
 
+        }
+
+        public static void CleanLogFiles()
+        {          
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0)  // //如果当前时间是0点0分
+                    {
+                        LogFileCleanupTask.CleanUp();                       
+                    }
+                    Thread.Sleep(60000);//1分钟间隔
+                }
+            });           
         }
 
 

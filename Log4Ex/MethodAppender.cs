@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static log4net.Appender.RollingFileAppender;
 
 namespace Log4Ex
 {    
