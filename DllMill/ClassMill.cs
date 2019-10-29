@@ -552,18 +552,14 @@ namespace DllMill
                     matNoReadyMill.INFO_FLAG = "5";
 
                     LogHelper.Info($"更新材料主档信息,材料号:{matNoReadyMill.BLT_NO}");
-                    db.Updateable<BLT_PROC>(matNoReadyMill).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
-
-                    //吐丝机温度
-                    var TSJ_TEMP = opc.OpLinkTagValue("TSJ_TEMP");
+                    db.Updateable<BLT_PROC>(matNoReadyMill).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();                   
 
                     //更新轧制过程数据
                     var updateData2 = new BLT_PROC_DATA()
                     {
                         BLT_NO = matNoReadyMill.BLT_NO,
                         LOT_NO = matNoReadyMill.LOT_NO,
-                        UPD_DATE = enMillTsTime,
-                        TUSI_TEMP = TSJ_TEMP.ToInt32()
+                        UPD_DATE = enMillTsTime                        
                     };
                     LogHelper.Info($"更新材料过程数据,内容:{updateData2.ToLog()}");
                     db.Updateable<BLT_PROC_DATA>(updateData2).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
@@ -601,6 +597,7 @@ namespace DllMill
                     //取已进入轧机的第一支坯料
                     var matNoReadyMill = db.Queryable<BLT_PROC>().Where(p =>
                     p.BLT_FLG == "12"
+                    //&& p.COAROLL_START_TIME < outMillTsTime.AddSeconds(-70)
                     //&& p.INFO_FLAG == "5"
                     //&& p.TUSHI_END_TIME ==null
                     //&& outMillTsTime > p.TUSHI_START_TIME
@@ -611,6 +608,13 @@ namespace DllMill
                     {
                         throw new Exception("轧机辊道材料不存在");
                     }
+                    TimeSpan timeDiff = outMillTsTime - matNoReadyMill.WR_RL_SAT_DT.ObjToDate();
+                    LogHelper.Info($"粗轧开始到吐丝结束实际时间为{timeDiff.TotalSeconds}s");
+                    if (timeDiff.TotalSeconds<70)
+                    {
+                        throw new Exception("粗轧开始到吐丝结束需要时间小于70s，信号无效");
+                    }
+                   
                     //取当班主轧操作员信息
                     var curShift = db.Queryable<CURSHIFT>().Where(it => it.ROLE == "主轧操作员").First();
                     shift = curShift.SHIFT_DATE + curShift.SHIFT_GROUP;
@@ -626,6 +630,47 @@ namespace DllMill
 
                     LogHelper.Info($"更新材料主档信息,材料号:{matNoReadyMill.BLT_NO}");
                     db.Updateable<BLT_PROC>(matNoReadyMill).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
+
+                    //吐丝机温度
+                    var TSJ_TEMP = opc.OpLinkTagValue("TSJ_TEMP");
+
+                    //风冷辊道速度12个
+                    var GD_SPD1 = opc.OpLinkTagValue("GD_SPD1");
+                    var GD_SPD2 = opc.OpLinkTagValue("GD_SPD2");
+                    var GD_SPD3 = opc.OpLinkTagValue("GD_SPD3");
+                    var GD_SPD4 = opc.OpLinkTagValue("GD_SPD4");
+                    var GD_SPD5 = opc.OpLinkTagValue("GD_SPD5");
+                    var GD_SPD6 = opc.OpLinkTagValue("GD_SPD6");
+                    var GD_SPD7 = opc.OpLinkTagValue("GD_SPD7");
+                    var GD_SPD8 = opc.OpLinkTagValue("GD_SPD8");                    
+                    var GD_SPD9 = opc.OpLinkTagValue("GD_SPD9");
+                    var GD_SPD10 = opc.OpLinkTagValue("GD_SPD10");
+                    var GD_SPD11= opc.OpLinkTagValue("GD_SPD11");
+                    var GD_SPD12 = opc.OpLinkTagValue("GD_SPD12");
+
+                    //更新轧制过程数据
+                    var updateData2 = new BLT_PROC_DATA()
+                    {
+                        BLT_NO = matNoReadyMill.BLT_NO,
+                        LOT_NO = matNoReadyMill.LOT_NO,
+                        TUSI_TEMP = TSJ_TEMP.ToInt32(),
+                        WR_AIR_C_Z_CONVEYOR_SPD1 = GD_SPD1.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD2 = GD_SPD2.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD3 = GD_SPD3.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD4 = GD_SPD4.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD5 = GD_SPD5.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD6 = GD_SPD6.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD7 = GD_SPD7.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD8 = GD_SPD8.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD9 = GD_SPD9.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD10 = GD_SPD10.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD11 = GD_SPD11.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD12 = GD_SPD12.ToSingle()
+
+                    };
+                    LogHelper.Info($"更新材料过程数据,内容:{updateData2.ToLog()}");
+                    db.Updateable<BLT_PROC_DATA>(updateData2).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
+
 
                     //过程数据获取
                     var blt_proc_data = db.Queryable<BLT_PROC_DATA>().Where(it=>it.BLT_NO == matNoReadyMill.BLT_NO).First();
@@ -657,7 +702,19 @@ namespace DllMill
                         WR_RL_OP_ABNR_OCR_EQP_LOC_TP = "",
                         TEMP_START_ROLL = (blt_proc_data == null ? 0 : blt_proc_data.WR_RM_ESD_MAT_TM),
                         FINROLL_IN_TMEP= (blt_proc_data == null ? 0 : blt_proc_data.FINROLL_IN_TMEP),
-                        TUSI_TEMP = (blt_proc_data == null ? 0 : blt_proc_data.TUSI_TEMP)
+                        TUSI_TEMP = (blt_proc_data == null ? 0 : blt_proc_data.TUSI_TEMP),
+                        WR_AIR_C_Z_CONVEYOR_SPD1 = GD_SPD1.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD2 = GD_SPD2.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD3 = GD_SPD3.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD4 = GD_SPD4.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD5 = GD_SPD5.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD6 = GD_SPD6.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD7 = GD_SPD7.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD8 = GD_SPD8.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD9 = GD_SPD9.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD10 = GD_SPD10.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD11 = GD_SPD11.ToSingle(),
+                        WR_AIR_C_Z_CONVEYOR_SPD12 = GD_SPD12.ToSingle()
                     };
                     LogHelper.Info($"新增电文X2H503数据,内容:{insertData3.ToLog()}");
                     db.Insertable<X2H503>(insertData3).ExecuteCommand();

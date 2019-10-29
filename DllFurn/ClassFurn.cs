@@ -93,11 +93,13 @@ namespace DllFurn
 
                     /*********************过程数据采集***********************/
                     //入炉温度
-                    var JRL_RL_TEMP = opc.OpLinkTagValue("JRL_RL_TEMP");
+                    //var JRL_RL_TEMP = opc.OpLinkTagValue("JRL_RL_TEMP");
+                    var JRL_RL_TEMP = opc.OpLinkTagValueMaxBetweenDate("JRL_RL_TEMP",DateTime.Now.AddSeconds(-3));//3秒内的最大值
 
                     //炉膛炉压
                     var LUTANG_P = opc.OpLinkTagValue("LUTANG_P");
                     //煤气总管压力
+                    var MQ_ZG_P = opc.OpLinkTagValue("MQ_ZG_P");
                     //煤气总管流量
                     var MQ_ZG_F = opc.OpLinkTagValue("MQ_ZG_F");
                     //煤气热值
@@ -105,7 +107,9 @@ namespace DllFurn
                     //换热器后风压
                     var HRQ_H_AIR_ZG_P = opc.OpLinkTagValue("HRQ_H_AIR_ZG_P");
                     //热风温度
+                    var H_WIND_T = opc.OpLinkTagValue("H_WIND_T");
                     //残氧含量
+                    var O2_VALUE = opc.OpLinkTagValue("O2_VALUE");
                     //预热段温度
                     var YR_LDZ_T = opc.OpLinkTagValue("YR_LDZ_T");
                     //上加温度-右
@@ -133,8 +137,11 @@ namespace DllFurn
                         UPD_DATE = enFurnTime,
                         IN_FURNACE_TEMP = JRL_RL_TEMP.ToInt32(),
                         FURN_PRESS = LUTANG_P.ToInt32(),
+                        GAS_PRESS = MQ_ZG_P.ToInt32(),
                         GAS_FLUX = MQ_ZG_F.ToInt32(),
                         HUANRE_PRESS_R = HRQ_H_AIR_ZG_P.ToInt32(),
+                        HOT_WIND_TEMP = H_WIND_T.ToInt32(),
+                        O2_VALUE = O2_VALUE.ToInt32(),
                         PRE_HEAT_TEMP = YR_LDZ_T.ToInt32(),
                         HEAT_TEMP_1 = S_JIARE_Y_T.ToInt32(),
                         HEAT_TEMP_2 = X_JIARE_Y_T.ToInt32(),
@@ -303,7 +310,23 @@ namespace DllFurn
                         WR_DESCALER_OP_F1 = "Y",
                         WR_DESCALER_OP_PRS1 = 0,
                         RF_EXIT_STATUS = "1",
-                        IN_FURNACE_TEMP = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.IN_FURNACE_TEMP)
+                        IN_FURNACE_TEMP = Convert.ToInt16(blt_proc_data == null ? 0 : blt_proc_data.IN_FURNACE_TEMP),
+                        FURN_PRESS = blt_proc_data == null ? 0 : blt_proc_data.FURN_PRESS,
+                        GAS_PRESS = blt_proc_data == null ? 0 : blt_proc_data.GAS_PRESS,
+                        GAS_FLUX = blt_proc_data == null ? 0 : blt_proc_data.GAS_FLUX,
+                        GAS_HEAT_VAL = blt_proc_data == null ? 0 : blt_proc_data.GAS_HEAT_VAL,
+                        HOT_WIND_TEMP = blt_proc_data == null ? 0 : blt_proc_data.HOT_WIND_TEMP,
+                        O2_VALUE = blt_proc_data == null ? 0 : blt_proc_data.O2_VALUE,
+                        PRE_HEAT_TEMP= blt_proc_data == null ? 0 : blt_proc_data.PRE_HEAT_TEMP,
+                        HEAT_TEMP_1 = Convert.ToSingle( blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_1),
+                        HEAT_TEMP_2 = Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_2),
+                        HEAT_TEMP_3 = Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_3),
+                        HEAT_TEMP_4 = Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_4),
+                        HEAT_TEMP_5= Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_5),
+                        HEAT_TEMP_6 = Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_6),
+                        HEAT_TEMP_7 = Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_7),
+                        HEAT_TEMP_8 = Convert.ToSingle(blt_proc_data == null ? 0 : blt_proc_data.HEAT_TEMP_8),
+
                     };
                     LogHelper.Info($"新增电文X2H502数据,内容:{insertData3.ToLog()}");
                     db.Insertable<X2H502>(insertData3).ExecuteCommand();

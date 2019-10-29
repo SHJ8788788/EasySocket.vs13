@@ -399,7 +399,7 @@ namespace Sugar.Enties
            /// Default:
            /// Nullable:True
            /// </summary>           
-           public int? WR_AIR_C_Z_CONVEYOR_SPD5 {get;set;}
+           public Single? WR_AIR_C_Z_CONVEYOR_SPD5 {get;set;}
 
            /// <summary>
            /// Desc:第5段辊速

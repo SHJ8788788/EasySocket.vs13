@@ -74,12 +74,13 @@ namespace DllOpc
                 throw ex.InnerException;
             }
         }
-        public static int OpLinkTagValueMaxBetweenDate(this IOpc opc, string tagName,DateTime dateFrom,DateTime dateTo = default(DateTime))
+        public static String OpLinkTagValueMaxBetweenDate(this IOpc opc, string tagName,DateTime dateFrom,DateTime dateTo = default(DateTime))
         {
             try
             {
                 var value = GetTagValueMaxBetweenDate(opc, tagName, dateFrom, dateTo).Result;
-                return Convert.ToInt32(value);          
+                LogHelper.Info(string.Format($"获取Tag点成功，tagName = {tagName} ,value = {value}"));
+                return value;          
             }
             catch (Exception ex)
             {

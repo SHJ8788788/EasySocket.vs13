@@ -73,7 +73,7 @@ namespace EasyServer
         }
 
         public static void CleanLogFiles()
-        {          
+        {           
             Task.Run(() =>
             {
                 while (true)

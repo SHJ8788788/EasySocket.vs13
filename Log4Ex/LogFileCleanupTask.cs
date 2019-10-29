@@ -66,8 +66,8 @@ namespace Log4Ex
 
             foreach (var info in fileInfos)
             {
-                int beginIndex = info.Name.LastIndexOf(".")-8;
-                int endIndex = info.Name.LastIndexOf(".");
+                int beginIndex = info.Name.LastIndexOf(".txt") -8;
+                int endIndex = info.Name.LastIndexOf(".txt");
                 if (endIndex>8)
                 {
                     string dateStr = info.Name.Substring(beginIndex, 8);

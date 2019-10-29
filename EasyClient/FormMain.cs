@@ -35,7 +35,7 @@ namespace EasyClient
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
-        {
+        {          
             Assembly assembly = null;
             string windowsPath = Path.Combine(Application.StartupPath, "Form");
             //string windowsPath = Application.StartupPath;
