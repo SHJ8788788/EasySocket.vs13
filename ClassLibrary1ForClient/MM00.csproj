@@ -53,6 +53,7 @@
       <DependentUpon>FormMM00A1.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SysTimeSetting.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasySocket.vs13\EasySocket.vs13.csproj">

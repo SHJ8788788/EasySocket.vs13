@@ -17,6 +17,17 @@ namespace MM00
         {
             return Instance.InvokeApi<bool>("Verification", msg);
         }
+
+        /// <summary>
+        /// 服务端时间同步
+        /// </summary>
+        /// <returns></returns>
+        public static Task<DateTime> TimeSync()
+        {
+            return Instance.InvokeApi<DateTime>("TimeSync");
+        }
+
+
         /// <summary>
         /// Tag信号发生变化
         /// </summary>

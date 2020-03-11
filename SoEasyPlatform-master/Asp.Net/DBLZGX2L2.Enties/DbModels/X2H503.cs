@@ -457,5 +457,13 @@ namespace Sugar.Enties
            /// </summary>           
            public Single? COOLLINE_TEMP_3 {get;set;}
 
+           /// <summary>
+           /// Desc:中轧出口侧温度
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public Single? WR_MID_RM_OUT_MAT_TM { get; set; }
+
+
     }
 }

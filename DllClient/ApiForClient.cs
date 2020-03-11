@@ -127,6 +127,6 @@ namespace DllClient
             Thread.Sleep(5000);
 
             return "通过服务端认证后返回：" + table.ToString();
-        }
+        }  
     }
 }

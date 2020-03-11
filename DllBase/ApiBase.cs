@@ -129,6 +129,13 @@ namespace DllBase
             return true;
         }
 
+        [Api]
+        [EasyLogFilter("时间同步-获取系统时间")]
+        public DateTime TimeSync()
+        {          
+            return DateTime.Now;
+        }
+
         /// <summary>
         /// 获取服务组件版本号
         /// </summary>       

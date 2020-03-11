@@ -260,7 +260,20 @@ namespace DllMill
                     LogHelper.Info($"更新材料主档信息,材料号:{matNoReadyMill.BLT_NO}");
                     db.Updateable<BLT_PROC>(matNoReadyMill).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
 
-                    //中轧温度缺失                   
+                    //中轧出口侧温度，取13号机前温度
+                    var ZZ_CK_TEMP = opc.OpLinkTagValue("ZZ_CK_TEMP");
+
+                    //更新轧制过程数据
+                    var updateData2 = new BLT_PROC_DATA()
+                    {
+                        BLT_NO = matNoReadyMill.BLT_NO,
+                        LOT_NO = matNoReadyMill.LOT_NO,
+                        UPD_DATE = outMill12Time,
+                        WR_MID_RM_OUT_MAT_TM = ZZ_CK_TEMP.ToSingle()                       
+                    };
+                    LogHelper.Info($"更新材料过程数据,内容:{updateData2.ToLog()}");
+                    db.Updateable<BLT_PROC_DATA>(updateData2).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
+
 
                     //事务提交
                     db.Ado.CommitTran();
@@ -428,6 +441,8 @@ namespace DllMill
 
                     //精轧入口温度
                     var JZ_RK_TEMP = opc.OpLinkTagValue("YJZ_TEMP");
+                    //精轧速度
+                    var JZJ_SPD = opc.OpLinkTagValue("JZJ_SPD");
 
                     //更新轧制过程数据
                     var updateData2 = new BLT_PROC_DATA()
@@ -435,7 +450,8 @@ namespace DllMill
                         BLT_NO = matNoReadyMill.BLT_NO,
                         LOT_NO = matNoReadyMill.LOT_NO,
                         UPD_DATE = enMillJzTime,
-                        FINROLL_IN_TMEP= JZ_RK_TEMP.ToInt32()
+                        FINROLL_IN_TMEP= JZ_RK_TEMP.ToInt32(),
+                        ROLL_SPEED_TMB2 = JZJ_SPD.ToInt32()
                     };
                     LogHelper.Info($"更新材料过程数据,内容:{updateData2.ToLog()}");
                     db.Updateable<BLT_PROC_DATA>(updateData2).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
@@ -492,7 +508,8 @@ namespace DllMill
                     db.Updateable<BLT_PROC>(matNoReadyMill).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
 
                     //精轧出口温度
-                    var JZ_CK_TEMP = opc.OpLinkTagValue("JZ_CK_TEMP");
+                    var JZ_CK_TEMP = opc.OpLinkTagValueMaxBetweenDate("JZ_CK_TEMP", DateTime.Now.AddSeconds(-5));//5秒内的最大值  
+                  
 
                     //更新轧制过程数据
                     var updateData2 = new BLT_PROC_DATA()
@@ -500,7 +517,7 @@ namespace DllMill
                         BLT_NO = matNoReadyMill.BLT_NO,
                         LOT_NO = matNoReadyMill.LOT_NO,
                         UPD_DATE = outMillJzTime,
-                        FINROLL_OUT_TEMP = JZ_CK_TEMP.ToInt32()
+                        FINROLL_OUT_TEMP = JZ_CK_TEMP.ToInt32()                        
                     };
                     LogHelper.Info($"更新材料过程数据,内容:{updateData2.ToLog()}");
                     db.Updateable<BLT_PROC_DATA>(updateData2).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand();
@@ -610,9 +627,9 @@ namespace DllMill
                     }
                     TimeSpan timeDiff = outMillTsTime - matNoReadyMill.WR_RL_SAT_DT.ObjToDate();
                     LogHelper.Info($"粗轧开始到吐丝结束实际时间为{timeDiff.TotalSeconds}s");
-                    if (timeDiff.TotalSeconds<70)
+                    if (timeDiff.TotalSeconds<120)
                     {
-                        throw new Exception("粗轧开始到吐丝结束需要时间小于70s，信号无效");
+                        throw new Exception("粗轧开始到吐丝结束需要时间小于120s，信号无效");
                     }
                    
                     //取当班主轧操作员信息
@@ -714,7 +731,10 @@ namespace DllMill
                         WR_AIR_C_Z_CONVEYOR_SPD9 = GD_SPD9.ToSingle(),
                         WR_AIR_C_Z_CONVEYOR_SPD10 = GD_SPD10.ToSingle(),
                         WR_AIR_C_Z_CONVEYOR_SPD11 = GD_SPD11.ToSingle(),
-                        WR_AIR_C_Z_CONVEYOR_SPD12 = GD_SPD12.ToSingle()
+                        WR_AIR_C_Z_CONVEYOR_SPD12 = GD_SPD12.ToSingle(),
+                        ROLL_SPEED_TMB2 = (blt_proc_data == null ? 0 : blt_proc_data.ROLL_SPEED_TMB2),
+                        WR_MID_RM_OUT_MAT_TM = (blt_proc_data == null ? 0 : blt_proc_data.WR_MID_RM_OUT_MAT_TM)
+
                     };
                     LogHelper.Info($"新增电文X2H503数据,内容:{insertData3.ToLog()}");
                     db.Insertable<X2H503>(insertData3).ExecuteCommand();

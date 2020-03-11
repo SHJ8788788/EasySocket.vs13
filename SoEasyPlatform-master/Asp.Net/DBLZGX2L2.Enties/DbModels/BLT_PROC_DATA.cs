@@ -508,6 +508,12 @@ namespace Sugar.Enties
         /// Nullable:True
         /// </summary>           
         public Single? FINROLL_OUT_TEMP { get; set; }
+        /// <summary>
+        /// Desc:中轧出口侧温度
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public Single? WR_MID_RM_OUT_MAT_TM { get; set; }
 
 
     }

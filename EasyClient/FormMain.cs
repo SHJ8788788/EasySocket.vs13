@@ -67,8 +67,8 @@ namespace EasyClient
             //不在同一线程可使用控件的Invoke方法调用CloseHandle
             EasyTcpClient.Instance.CloseHandle = CloseHandle
                                       = LoginFormShowAfterReconnect;
-            //if (EasyTcpClient.Instance.Connect("172.16.6.30", 5555))
-            if (EasyTcpClient.Instance.Connect("172.22.197.45", 5555))
+            if (EasyTcpClient.Instance.Connect("172.16.6.30", 5555))
+            //if (EasyTcpClient.Instance.Connect("172.22.197.45", 5555))
             {
 
             }

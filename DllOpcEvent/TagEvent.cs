@@ -155,23 +155,6 @@ namespace DllOpcEvent
                 LogHelper.Info($"TagName:{tag.TagName},TagValue:{tag.TagValue.ToString()} 不存在可用的函数或信号未能处理");
             }
             return true;            
-        }
-
-        [Api]
-        [EasyLogFilter("取信号点值")]
-        public   string GetTriggerValue(string tagName)
-        {         
-            bool result  = this.GetTriggerValueFromOPC(tagName).ToBool();
-            string value = "";
-            if (result==true)
-            {
-                value = "1";
-            }
-            else
-            {
-                value = "0";
-            }
-            return value;
-        }
+        }      
     }
 }

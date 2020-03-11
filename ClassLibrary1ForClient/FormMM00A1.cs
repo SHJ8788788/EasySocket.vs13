@@ -312,5 +312,21 @@ namespace MM00
         {
             this.WindowState = FormWindowState.Maximized;
         }
+
+        private  void btnTimeSync_Click(object sender, EventArgs e)
+        {
+            try
+            {               
+                var result = ClientProxy.TimeSync().Result;
+                textBoxTimeNow.Text = result.ToLongDateString();
+                SysTimeSetting.SetLocalTimeByStr(result.ToString("yyyyMMddHHmmss"));
+                Console.WriteLine(DateTime.Now.ToString() + "  " + result);
+            }
+            catch (Exception ee)
+            {
+                this.AddMsg(ee.Message.ToString());
+            }
+
+        }
     }
 }

@@ -56,13 +56,18 @@
             this.tbUser = new System.Windows.Forms.TextBox();
             this.lbxMsg = new System.Windows.Forms.ListBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label8 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtTagValue3 = new System.Windows.Forms.TextBox();
             this.txtTagName3 = new System.Windows.Forms.TextBox();
             this.txtTagValue2 = new System.Windows.Forms.TextBox();
             this.txtTagName2 = new System.Windows.Forms.TextBox();
+            this.txtTriggerValue1 = new System.Windows.Forms.TextBox();
             this.txtTagValue1 = new System.Windows.Forms.TextBox();
+            this.txtTriggerName1 = new System.Windows.Forms.TextBox();
+            this.btnGetTriggerValue = new System.Windows.Forms.Button();
             this.txtTagName1 = new System.Windows.Forms.TextBox();
             this.btnGetValue = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -97,11 +102,8 @@
             this.button1false = new System.Windows.Forms.Button();
             this.button1true = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
-            this.btnGetTriggerValue = new System.Windows.Forms.Button();
-            this.txtTriggerName1 = new System.Windows.Forms.TextBox();
-            this.txtTriggerValue1 = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxTimeNow = new System.Windows.Forms.TextBox();
+            this.btnTimeSync = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -147,12 +149,14 @@
             this.groupBox2.Controls.Add(this.btnGetMessage10s);
             this.groupBox2.Controls.Add(this.btn100000s);
             this.groupBox2.Controls.Add(this.tbGetMessage10s);
+            this.groupBox2.Controls.Add(this.textBoxTimeNow);
             this.groupBox2.Controls.Add(this.tbVoidSetMessage);
+            this.groupBox2.Controls.Add(this.btnTimeSync);
             this.groupBox2.Controls.Add(this.btnVoidSetMessage);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Location = new System.Drawing.Point(3, 103);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(671, 198);
+            this.groupBox2.Size = new System.Drawing.Size(671, 221);
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "测试2";
@@ -413,6 +417,15 @@
             this.tabPage2.Text = "测试页2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(258, 258);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(17, 12);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "值";
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -421,6 +434,15 @@
             this.label5.Size = new System.Drawing.Size(17, 12);
             this.label5.TabIndex = 2;
             this.label5.Text = "值";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(59, 258);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(29, 12);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "名称";
             // 
             // label4
             // 
@@ -444,7 +466,7 @@
             this.txtTagName3.Name = "txtTagName3";
             this.txtTagName3.Size = new System.Drawing.Size(100, 21);
             this.txtTagName3.TabIndex = 1;
-            this.txtTagName3.Text = "Ramp103";
+            this.txtTagName3.Text = "JZ_RK_TEMP";
             // 
             // txtTagValue2
             // 
@@ -459,7 +481,14 @@
             this.txtTagName2.Name = "txtTagName2";
             this.txtTagName2.Size = new System.Drawing.Size(100, 21);
             this.txtTagName2.TabIndex = 1;
-            this.txtTagName2.Text = "Ramp102";
+            this.txtTagName2.Text = "JZ_CK_TEMP";
+            // 
+            // txtTriggerValue1
+            // 
+            this.txtTriggerValue1.Location = new System.Drawing.Point(289, 255);
+            this.txtTriggerValue1.Name = "txtTriggerValue1";
+            this.txtTriggerValue1.Size = new System.Drawing.Size(100, 21);
+            this.txtTriggerValue1.TabIndex = 1;
             // 
             // txtTagValue1
             // 
@@ -468,13 +497,31 @@
             this.txtTagValue1.Size = new System.Drawing.Size(100, 21);
             this.txtTagValue1.TabIndex = 1;
             // 
+            // txtTriggerName1
+            // 
+            this.txtTriggerName1.Location = new System.Drawing.Point(100, 255);
+            this.txtTriggerName1.Name = "txtTriggerName1";
+            this.txtTriggerName1.Size = new System.Drawing.Size(100, 21);
+            this.txtTriggerName1.TabIndex = 1;
+            this.txtTriggerName1.Text = "H10YAOGANG";
+            // 
+            // btnGetTriggerValue
+            // 
+            this.btnGetTriggerValue.Location = new System.Drawing.Point(425, 253);
+            this.btnGetTriggerValue.Name = "btnGetTriggerValue";
+            this.btnGetTriggerValue.Size = new System.Drawing.Size(75, 23);
+            this.btnGetTriggerValue.TabIndex = 0;
+            this.btnGetTriggerValue.Text = "取信号值";
+            this.btnGetTriggerValue.UseVisualStyleBackColor = true;
+            this.btnGetTriggerValue.Click += new System.EventHandler(this.btnGetTriggerValue_Click);
+            // 
             // txtTagName1
             // 
             this.txtTagName1.Location = new System.Drawing.Point(100, 74);
             this.txtTagName1.Name = "txtTagName1";
             this.txtTagName1.Size = new System.Drawing.Size(100, 21);
             this.txtTagName1.TabIndex = 1;
-            this.txtTagName1.Text = "Ramp101";
+            this.txtTagName1.Text = "CZ_TEMP";
             // 
             // btnGetValue
             // 
@@ -807,48 +854,22 @@
             this.label6.TabIndex = 0;
             this.label6.Text = "模拟OPC";
             // 
-            // btnGetTriggerValue
+            // textBoxTimeNow
             // 
-            this.btnGetTriggerValue.Location = new System.Drawing.Point(425, 253);
-            this.btnGetTriggerValue.Name = "btnGetTriggerValue";
-            this.btnGetTriggerValue.Size = new System.Drawing.Size(75, 23);
-            this.btnGetTriggerValue.TabIndex = 0;
-            this.btnGetTriggerValue.Text = "取信号值";
-            this.btnGetTriggerValue.UseVisualStyleBackColor = true;
-            this.btnGetTriggerValue.Click += new System.EventHandler(this.btnGetTriggerValue_Click);
+            this.textBoxTimeNow.Location = new System.Drawing.Point(6, 194);
+            this.textBoxTimeNow.Name = "textBoxTimeNow";
+            this.textBoxTimeNow.Size = new System.Drawing.Size(244, 21);
+            this.textBoxTimeNow.TabIndex = 1;
             // 
-            // txtTriggerName1
+            // btnTimeSync
             // 
-            this.txtTriggerName1.Location = new System.Drawing.Point(100, 255);
-            this.txtTriggerName1.Name = "txtTriggerName1";
-            this.txtTriggerName1.Size = new System.Drawing.Size(100, 21);
-            this.txtTriggerName1.TabIndex = 1;
-            this.txtTriggerName1.Text = "H10YAOGANG";
-            // 
-            // txtTriggerValue1
-            // 
-            this.txtTriggerValue1.Location = new System.Drawing.Point(289, 255);
-            this.txtTriggerValue1.Name = "txtTriggerValue1";
-            this.txtTriggerValue1.Size = new System.Drawing.Size(100, 21);
-            this.txtTriggerValue1.TabIndex = 1;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(59, 258);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(29, 12);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "名称";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(258, 258);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(17, 12);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "值";
+            this.btnTimeSync.Location = new System.Drawing.Point(269, 192);
+            this.btnTimeSync.Name = "btnTimeSync";
+            this.btnTimeSync.Size = new System.Drawing.Size(124, 23);
+            this.btnTimeSync.TabIndex = 0;
+            this.btnTimeSync.Text = "获取时间";
+            this.btnTimeSync.UseVisualStyleBackColor = true;
+            this.btnTimeSync.Click += new System.EventHandler(this.btnTimeSync_Click);
             // 
             // FormMM00A1
             // 
@@ -951,6 +972,8 @@
         private System.Windows.Forms.TextBox txtTriggerValue1;
         private System.Windows.Forms.TextBox txtTriggerName1;
         private System.Windows.Forms.Button btnGetTriggerValue;
+        private System.Windows.Forms.TextBox textBoxTimeNow;
+        private System.Windows.Forms.Button btnTimeSync;
     }
 }
 
